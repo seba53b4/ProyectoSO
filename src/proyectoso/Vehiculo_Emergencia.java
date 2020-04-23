@@ -11,4 +11,10 @@ package proyectoso;
  */
 public class Vehiculo_Emergencia {
     
+    private Integer tarifa;
+
+    public Integer getTarifa() {
+        return tarifa;
+    }
+
 }
