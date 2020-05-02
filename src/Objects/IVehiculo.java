@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package proyectoso;
+package Objects;
 
 /**
  *
  * @author Seba-OS
  */
-public class Camion {
+public abstract interface IVehiculo {
+    
+    public abstract String getTipo();
     
 }

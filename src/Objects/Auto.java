@@ -3,18 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package proyectoso;
+package Objects;
 
 /**
  *
  * @author Seba-OS
  */
-public class Vehiculo_Emergencia {
+public class Auto implements IVehiculo{
+
     
-    private Integer tarifa;
-
-    public Integer getTarifa() {
-        return tarifa;
+    public Auto(){
+        
     }
-
+    
+    
+    @Override
+    public String getTipo() {
+        return "auto";
+    }
+    
 }

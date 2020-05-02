@@ -11,4 +11,7 @@ package proyectoso;
  */
 public class Peaje {
     
+    
+    
+    
 }

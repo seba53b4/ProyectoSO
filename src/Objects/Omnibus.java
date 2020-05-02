@@ -3,12 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package proyectoso;
+package Objects;
 
 /**
  *
  * @author Seba-OS
  */
-public interface IVehiculo {
+public class Omnibus implements IVehiculo{
+
+    public Omnibus(){
+        
+    }
+    
+    @Override
+    public String getTipo() {
+        return "omnibus";
+    }
     
 }

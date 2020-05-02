@@ -3,12 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package proyectoso;
+package Objects;
 
 /**
  *
  * @author Seba-OS
  */
-public class Auto {
+public class Camion implements IVehiculo{
+    
+    
+    public Camion(){
+        
+    }
+    
+    @Override
+    public String getTipo() {
+        return "camion";
+    }
     
 }
