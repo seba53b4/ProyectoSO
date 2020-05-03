@@ -1,1 +1,11 @@
+
+#Folders
 /build/
+/nbproject/private
+/dist/
+
+# Class Files #
+*.class
+
+# Package Files #
+
