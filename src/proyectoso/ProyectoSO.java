@@ -22,7 +22,10 @@ public class ProyectoSO {
      */
     public static void main(String[] args) {
         
-        ArrayList<IVehiculo> vehiculos = new ArrayList<>();
+        Peaje peaje = new Peaje();
+        peaje.start();
+        
+       /* ArrayList<IVehiculo> vehiculos = new ArrayList<>();
         
         vehiculos.add(new Camion());
         vehiculos.add(new Camion());
@@ -32,7 +35,7 @@ public class ProyectoSO {
         for (IVehiculo veh : vehiculos) {
             System.out.println(veh.getTipo());
         }
-        
+        */
         
     }
     
