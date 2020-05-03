@@ -26,4 +26,9 @@ public class Vehiculo_Emergencia implements IVehiculo{
         return "emergencia";
     }
 
+    @Override
+    public boolean getTelepeaje() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

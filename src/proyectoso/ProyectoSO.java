@@ -9,6 +9,7 @@ import Objects.Camion;
 import Objects.IVehiculo;
 import Objects.Auto;
 import Objects.Vehiculo_Emergencia;
+import Utils.HandleFile;
 import java.util.ArrayList;
 
 /**
@@ -20,10 +21,18 @@ public class ProyectoSO {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         
+        HandleFile.initHandeFile();
         Peaje peaje = new Peaje();
+        BancoDatos.initBancoDatos(115.0, 195.0, 195.0);
         peaje.start();
+        
+        peaje.join();
+        
+        System.out.println("Cantidad de vehiculos: " + BancoDatos.getBancoDatos().getCantidadVehiculos());
+        System.out.println("Costo operativo: " + BancoDatos.getBancoDatos().getCostoOperativo());
+        System.out.println("Recaudacion: " + BancoDatos.getBancoDatos().getRecaudacion());
         
        /* ArrayList<IVehiculo> vehiculos = new ArrayList<>();
         

@@ -9,7 +9,10 @@ import Objects.Auto;
 import Objects.Camion;
 import Objects.IVehiculo;
 import Objects.Omnibus;
+import Utils.HandleFile;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,29 +22,52 @@ public class Peaje extends Thread{
 
     IVehiculo[] vehiculos = new IVehiculo[3];//archivo.lenght];
     
-    
     ArrayList<Casilla> casillas;
    
     
     @Override
     public void run() {
         
+        
+        int iter = 0;
+        
         for (IVehiculo veh : vehiculos) {
             
-            System.out.println("Ingresa vehiculo desde peaje en casilla 1" + veh.getTipo() );
+            System.out.println("Ingresa vehiculo desde peaje en casilla 1 " + veh.getTipo() );
             casillas.get(0).addVehiculoEnEspera(veh);
-         }
-            casillas.get(0).start();
-            
-        for (IVehiculo veh : vehiculos) {
-            
-            System.out.println("Ingresa vehiculo desde peaje en casilla 2" + veh.getTipo() );
             casillas.get(1).addVehiculoEnEspera(veh);
+            
          }
-            casillas.get(1).start();
+        
+        for (Casilla casilla : casillas) {
+            casilla.start();
+        }
+        
+        
+        for (Casilla casilla : casillas) {
+            try {
+                casilla.join();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Peaje.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        
+        HandleFile.initHandeFile().closeArchivoWriter();
+        
+        
+        /*
+        while (casillas.get(0).isAlive() && casillas.get(1).isAlive()) {
+            try {
+                wait();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Peaje.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }*/
+        
+    
         
     }
-    
     
     public Peaje(){
         

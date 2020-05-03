@@ -11,6 +11,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -20,14 +25,41 @@ import java.io.FileWriter;
 public class HandleFile{
     
     private final String dir ;
+    private static HandleFile hf;
+    private final Queue<String> salida = new LinkedList<String>();
+    private FileWriter fw; 
+    private BufferedWriter bw;
+    
+    
+    public static HandleFile initHandeFile(){
+        if (hf == null) {
+            hf = new HandleFile();
+        }
+        return hf;
+    }
     
     
     public HandleFile()
     {        
           dir = System.getProperty("user.dir");// + "\\":
+          File f = new File(dir+"//salida.txt");
+          try {
+              fw = new FileWriter(f,true);
+          } catch (IOException ex) {
+              Logger.getLogger(HandleFile.class.getName()).log(Level.SEVERE, null, ex);
+          }
+          bw = new BufferedWriter(fw);
+          
     }
 
-   
+    public void closeArchivoWriter(){
+        try {
+            
+            this.bw.close();
+        } catch (IOException ex) {
+            Logger.getLogger(HandleFile.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     private void cargaArchivo()
     {
@@ -44,15 +76,13 @@ public class HandleFile{
         }
     }
     
-    public boolean writeArchivo(String line)
+    public synchronized boolean writeArchivo(String line)
     {
-        File f = new File(dir+"archivo salida");
+        
         try {
-            FileWriter fw = new FileWriter(f);
-            BufferedWriter bw = new BufferedWriter(fw);
-            String linea  = line;
-            bw.write(linea);
             
+            String linea  = line;
+            bw.write(linea+"\n");
             
             return true;
         } catch(Exception e) {

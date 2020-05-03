@@ -20,5 +20,10 @@ public class Camion implements IVehiculo{
     public String getTipo() {
         return "camion";
     }
+
+    @Override
+    public boolean getTelepeaje() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

@@ -1,0 +1,6 @@
+En casilla 2 paso un auto
+En casilla 1 paso un auto
+En casilla 2 paso un camion
+En casilla 2 paso un omnibus
+En casilla 1 paso un camion
+En casilla 1 paso un omnibus

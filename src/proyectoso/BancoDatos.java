@@ -16,6 +16,7 @@ public class BancoDatos {
     
     private int cantidadVehiculos;
     private Double costoOperativo;
+
     private Double recaudacion;
     private final Double tarifaAuto;
     private final Double tarifaOmnibus;
@@ -28,6 +29,10 @@ public class BancoDatos {
         return bancoDatos;
     }
     
+    public static BancoDatos getBancoDatos(){
+        return bancoDatos;
+    }
+    
     public BancoDatos(Double tarifaCar, Double tarifaTruck, Double tarifaBus){
         costoOperativo = 0.0;
         recaudacion = 0.0;
@@ -37,8 +42,24 @@ public class BancoDatos {
         tarifaOmnibus = tarifaBus;
     }
     
+    public int getCantidadVehiculos() {
+        return cantidadVehiculos;
+    }
+
+    public Double getCostoOperativo() {
+        return costoOperativo;
+    }
+
+    public Double getRecaudacion() {
+        return recaudacion;
+    }
     
-    public synchronized Double getTarifa(String tipo){
+    public synchronized void aumentarRecaudacion(String tipo){
+        this.recaudacion += getTarifa(tipo);
+    }
+    
+    
+    public Double getTarifa(String tipo){
         
         switch (tipo.toLowerCase()) {
             case "auto": 
@@ -54,12 +75,12 @@ public class BancoDatos {
         }
     }
     
-    public void incCantidadVehiculos() {
-        this.cantidadVehiculos = cantidadVehiculos++;
+    public synchronized void incCantidadVehiculos() {
+        this.cantidadVehiculos = cantidadVehiculos + 1;
     }
     
     
-    public void aumentarCostoOperativo(Double costo) {
+    public synchronized void aumentarCostoOperativo(Double costo) {
         this.costoOperativo = costoOperativo + costo;
     }
     

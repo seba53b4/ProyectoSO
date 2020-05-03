@@ -12,5 +12,6 @@ package Objects;
 public abstract interface IVehiculo {
     
     public abstract String getTipo();
+    public boolean getTelepeaje();
     
 }

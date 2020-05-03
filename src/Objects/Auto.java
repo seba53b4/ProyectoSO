@@ -21,5 +21,10 @@ public class Auto implements IVehiculo{
     public String getTipo() {
         return "auto";
     }
+
+    @Override
+    public boolean getTelepeaje() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

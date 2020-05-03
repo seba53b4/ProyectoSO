@@ -19,5 +19,10 @@ public class Omnibus implements IVehiculo{
     public String getTipo() {
         return "omnibus";
     }
+
+    @Override
+    public boolean getTelepeaje() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

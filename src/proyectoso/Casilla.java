@@ -6,6 +6,7 @@
 package proyectoso;
 
 import Objects.IVehiculo;
+import Utils.HandleFile;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.Semaphore;
@@ -20,26 +21,26 @@ public class Casilla extends Thread{
 
     private int numeroCasilla;
     private Queue<IVehiculo> enEspera; // 
-    private boolean habilitado;
+    private boolean habilitada;
     private boolean telepeaje;
     private Semaphore accesoCasilla;
     
-    public Queue<IVehiculo> getEnEspera() { //
+    public synchronized Queue<IVehiculo> getEnEspera() { //
         return enEspera;
     }
 
     public boolean isHabilitado() {
-        return habilitado;
+        return habilitada;
     }
 
-    public void setHabilitado(boolean habilitado) {
-        this.habilitado = habilitado;
+    public void setHabilitado(boolean available) {
+        this.habilitada = available;
     }
     
     
     public Casilla(int numCasilla, boolean tel){
         enEspera = new LinkedList<IVehiculo>() ;
-        habilitado = true;
+        habilitada = true;
         numeroCasilla = numCasilla;
         telepeaje = tel;
         accesoCasilla = new Semaphore(1);
@@ -49,12 +50,21 @@ public class Casilla extends Thread{
     public void run() {
         try {
             // Agarra un vehiculo y lo procesa
-            while (!enEspera.isEmpty()) {
-                
             
+            while (!enEspera.isEmpty()) {
+                System.out.println("Ingresa  en casilla " + this.numeroCasilla +" el vehiculo: " +enEspera.peek().getTipo());
+                
             accesoCasilla.acquire();
-            System.out.println("Procesa casilla: " + this.numeroCasilla +" " +enEspera.poll().getTipo());
-            // procesaminto
+            IVehiculo aux = enEspera.poll();
+            
+            System.out.println("Procesa casilla " + this.numeroCasilla +" el vehiculo: " + aux.getTipo());
+            
+            BancoDatos.getBancoDatos().incCantidadVehiculos();
+            BancoDatos.getBancoDatos().aumentarRecaudacion(aux.getTipo());
+            BancoDatos.getBancoDatos().aumentarCostoOperativo(200.0);
+            HandleFile.initHandeFile().writeArchivo("En casilla "+ this.numeroCasilla +" paso un " + aux.getTipo() );
+            
+
             accesoCasilla.release();
             }
         } catch (InterruptedException ex) {
