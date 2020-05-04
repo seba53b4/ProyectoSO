@@ -34,6 +34,7 @@ public class ProyectoSO {
         System.out.println("Costo operativo: " + BancoDatos.getBancoDatos().getCostoOperativo());
         System.out.println("Recaudacion: " + BancoDatos.getBancoDatos().getRecaudacion());
         
+        
        /* ArrayList<IVehiculo> vehiculos = new ArrayList<>();
         
         vehiculos.add(new Camion());

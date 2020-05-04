@@ -5,6 +5,8 @@
  */
 package Objects;
 
+import java.util.Date;
+
 /**
  *
  * @author Seba-OS
@@ -22,6 +24,16 @@ public class Omnibus implements IVehiculo{
 
     @Override
     public boolean getTelepeaje() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String getMatricula() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Date getTime() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

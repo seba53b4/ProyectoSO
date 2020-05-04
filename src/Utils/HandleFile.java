@@ -6,12 +6,18 @@
 package Utils;
 
 
+import Objects.IVehiculo;
+import Objects.Vehiculo;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.logging.Level;
@@ -26,9 +32,11 @@ public class HandleFile{
     
     private final String dir ;
     private static HandleFile hf;
-    private final Queue<String> salida = new LinkedList<String>();
+    private final Queue<String> salida = new LinkedList<>();
     private FileWriter fw; 
-    private BufferedWriter bw;
+    private FileReader fr;
+    private final BufferedWriter bufferWriter;
+    private final SimpleDateFormat formatoFecha;
     
     
     public static HandleFile initHandeFile(){
@@ -48,46 +56,86 @@ public class HandleFile{
           } catch (IOException ex) {
               Logger.getLogger(HandleFile.class.getName()).log(Level.SEVERE, null, ex);
           }
-          bw = new BufferedWriter(fw);
+          try {
+              fr = new FileReader(dir+"//entrada.txt");
+          } catch (IOException ex) {
+              Logger.getLogger(HandleFile.class.getName()).log(Level.SEVERE, null, ex);
+          }
+          bufferWriter = new BufferedWriter(fw);
+          formatoFecha = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
+          
           
     }
 
+    
     public void closeArchivoWriter(){
         try {
             
-            this.bw.close();
+            this.bufferWriter.close();
+            this.fw.close();
         } catch (IOException ex) {
             Logger.getLogger(HandleFile.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    private void cargaArchivo()
+    public Date parseDate(String date)
     {
+        Date fechaDate = null;
         try {
-        FileReader fr = new FileReader(dir);
-        BufferedReader br = new BufferedReader(fr);
-        String linea;
-        while((linea = br.readLine()) != null)
+            fechaDate = formatoFecha.parse(date);
+        } 
+        catch (ParseException ex) 
         {
-           
+            System.out.println(ex);
         }
-      } catch(Exception e) {
-          System.out.println("Excepcion leyendo fichero " +": " + e);
-        }
+        return fechaDate;
     }
+    
+    public ArrayList<IVehiculo> cargaArchivo()
+    {
+        ArrayList res = null;
+        try {
+            
+            BufferedReader br = new BufferedReader(fr);
+            
+            res = new ArrayList();
+            String[] line = new String[4];
+            String linea;
+            IVehiculo veh;
+            br.readLine();
+            while((linea = br.readLine()) != null)
+            {
+                line = linea.split(";");
+                if (line[2].equals("1")) {
+                    res.add(new Vehiculo(line[0],line[1],true,parseDate(line[3])));
+                } else {
+                    res.add(new Vehiculo(line[0],line[1],false,parseDate(line[3])));
+                }
+                
+            }
+            br.close();
+            this.fr.close();
+            
+        } catch(Exception e) {
+            System.out.println("Excepcion leyendo fichero " +": " + e);
+        }
+        return res;
+        
+    }
+    
     
     public synchronized boolean writeArchivo(String line)
     {
         
         try {
-            
+            Date dt = new Date();
             String linea  = line;
-            bw.write(linea+"\n");
+            bufferWriter.write(linea+" "+this.formatoFecha.format(dt) +" \n");
             
             return true;
         } catch(Exception e) {
-          System.out.println("Excepcion leyendo fichero" + e);
-          
+            System.out.println("Excepcion leyendo fichero" + e);
+            
         }
         return false;
     }

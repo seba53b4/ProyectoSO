@@ -5,6 +5,8 @@
  */
 package Objects;
 
+import java.util.Date;
+
 /**
  *
  * @author Seba-OS
@@ -13,5 +15,7 @@ public abstract interface IVehiculo {
     
     public abstract String getTipo();
     public boolean getTelepeaje();
+    public String getMatricula();
+    public Date getTime();
     
 }

@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 public class Casilla extends Thread{
 
     private int numeroCasilla;
-    private Queue<IVehiculo> enEspera; // 
+    private Queue<IVehiculo> enEspera; //
     private boolean habilitada;
     private boolean telepeaje;
     private Semaphore accesoCasilla;
@@ -61,10 +61,9 @@ public class Casilla extends Thread{
             
             BancoDatos.getBancoDatos().incCantidadVehiculos();
             BancoDatos.getBancoDatos().aumentarRecaudacion(aux.getTipo());
-            BancoDatos.getBancoDatos().aumentarCostoOperativo(200.0);
+            BancoDatos.getBancoDatos().aumentarCostoOperativo(45.0);
             HandleFile.initHandeFile().writeArchivo("En casilla "+ this.numeroCasilla +" paso un " + aux.getTipo() );
             
-
             accesoCasilla.release();
             }
         } catch (InterruptedException ex) {

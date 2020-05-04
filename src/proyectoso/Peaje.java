@@ -13,6 +13,8 @@ import Utils.HandleFile;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+// uso solo para pruebas
+import java.util.Random;
 
 /**
  *
@@ -20,28 +22,29 @@ import java.util.logging.Logger;
  */
 public class Peaje extends Thread{
 
-    IVehiculo[] vehiculos = new IVehiculo[3];//archivo.lenght];
-    
-    ArrayList<Casilla> casillas;
+    private ArrayList<IVehiculo> vehiculos;//archivo.lenght];
+    private ArrayList<Casilla> casillas;
    
-    
     @Override
     public void run() {
         
         
         int iter = 0;
+        Random generador = new Random(); // generador de numeros random para pruebas, los vehiculos caen en las casillas de manera random.
         
         for (IVehiculo veh : vehiculos) {
-            
-            System.out.println("Ingresa vehiculo desde peaje en casilla 1 " + veh.getTipo() );
-            casillas.get(0).addVehiculoEnEspera(veh);
-            casillas.get(1).addVehiculoEnEspera(veh);
-            
-         }
+            casillas.get(generador.nextInt(5)).addVehiculoEnEspera(veh);
+        }
         
         for (Casilla casilla : casillas) {
             casilla.start();
         }
+        
+        // aca deberia ir la logica de controlar las vias habilitadas y los eventos de emergencia. Podria ser con otra clase planificacdor o en esta misma clase.
+        // A su vez las casillas no deberian finalizar si quedan sus listas enEspera vacias, si no terminan antes que se vuelva a mandar otros vehiculos.
+        //Nota. 1- Todavia no se si esta clase deberia ser un thread..
+        //      2- Falta hacer el Reloj
+        
         
         
         for (Casilla casilla : casillas) {
@@ -54,34 +57,17 @@ public class Peaje extends Thread{
         
         
         HandleFile.initHandeFile().closeArchivoWriter();
-        
-        
-        /*
-        while (casillas.get(0).isAlive() && casillas.get(1).isAlive()) {
-            try {
-                wait();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Peaje.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }*/
-        
-    
-        
     }
     
     public Peaje(){
         
         casillas = new ArrayList<>();
-        
         casillas.add(new Casilla(1, true));
         casillas.add(new Casilla(2, false));
         casillas.add(new Casilla(3, false));
         casillas.add(new Casilla(4, true));
         casillas.add(new Casilla(5, true));
-        vehiculos[0] = new Auto();
-        vehiculos[1] = new Camion();
-        vehiculos[2] = new Omnibus();
-        //vehiculos[3] = new Auto();
+        vehiculos = HandleFile.initHandeFile().cargaArchivo();
         
     }
     
