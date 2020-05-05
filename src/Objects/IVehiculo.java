@@ -11,7 +11,7 @@ import java.util.Date;
  *
  * @author Seba-OS
  */
-public abstract interface IVehiculo {
+public abstract interface IVehiculo extends Comparable<IVehiculo>{
     
     public abstract String getTipo();
     public boolean getTelepeaje();

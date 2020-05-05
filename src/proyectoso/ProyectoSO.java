@@ -26,9 +26,7 @@ public class ProyectoSO {
         HandleFile.initHandeFile();
         Peaje peaje = new Peaje();
         BancoDatos.initBancoDatos(115.0, 195.0, 195.0);
-        peaje.start();
-        
-        peaje.join();
+        peaje.iniciar();
         
         System.out.println("Cantidad de vehiculos: " + BancoDatos.getBancoDatos().getCantidadVehiculos());
         System.out.println("Costo operativo: " + BancoDatos.getBancoDatos().getCostoOperativo());

@@ -44,5 +44,19 @@ public class Vehiculo implements IVehiculo{
     public Date getTime() {
         return horaLlegada;
     }
+
+    @Override
+    public int compareTo(IVehiculo t) {
+        
+        if (this.getTipo().equals("emergencia") && !t.getTipo().equals("emergencia")){
+            return -1;
+        }
+        else if (!this.getTipo().equals("emergencia") && t.getTipo().equals("emergencia")){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    }
     
 }

@@ -91,14 +91,14 @@ public class HandleFile{
         return fechaDate;
     }
     
-    public ArrayList<IVehiculo> cargaArchivo()
+    public Queue<IVehiculo> cargaArchivo()
     {
-        ArrayList res = null;
+        Queue<IVehiculo> res = null;
         try {
             
             BufferedReader br = new BufferedReader(fr);
             
-            res = new ArrayList();
+            res = new LinkedList<>();
             String[] line = new String[4];
             String linea;
             IVehiculo veh;
