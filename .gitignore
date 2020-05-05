@@ -1,14 +1,14 @@
 
 #Folders
-build/
-nbproject/private
-dist/
+/build/
+/nbproject/private/
+/dist/
 
 # Class Files #
 *.class
-salida.txt
+*.txt
 # Package Files #
 
-nbproject/private/private.properties
+/nbproject/private/*.properties
 
 salida.txt
