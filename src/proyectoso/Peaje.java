@@ -54,13 +54,14 @@ public class Peaje{
         IVehiculo veh;
         Casilla elegida;
         while (!vehiculos.isEmpty()) {
-            
-            veh = vehiculos.poll();
-            elegida = siguienteHabilitada();
-            elegida.addVehiculoEnEspera(veh);
-            if (!elegida.isAlive()) {
-                elegida.start();
-                elegida.setHabilitada(true);
+            if (Reloj.hora() >= vehiculos.peek().DAte){
+                veh = vehiculos.poll();
+                elegida = siguienteHabilitada();
+                elegida.addVehiculoEnEspera(veh);
+                if (!elegida.isAlive()) {
+                    elegida.start();
+                    elegida.setHabilitada(true);
+                }
             }
             
             
