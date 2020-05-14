@@ -39,18 +39,21 @@ public class HandleFile{
     private final SimpleDateFormat formatoFecha;
     
     
-    public static HandleFile initHandeFile(){
+    public static HandleFile getInstance(){
         if (hf == null) {
             hf = new HandleFile();
         }
         return hf;
     }
     
+    public SimpleDateFormat getFormatoFecha(){
+        return formatoFecha;
+    }
     
     public HandleFile()
     {        
           dir = System.getProperty("user.dir");// + "\\":
-          File f = new File(dir+"//salida.txt");
+          File f = new File(dir+"//salida.csv");
           try {
               fw = new FileWriter(f,true);
           } catch (IOException ex) {
@@ -83,6 +86,7 @@ public class HandleFile{
         Date fechaDate = null;
         try {
             fechaDate = formatoFecha.parse(date);
+            System.out.println("fecha date en carga: "+ formatoFecha.format(fechaDate).toString());
         } 
         catch (ParseException ex) 
         {
@@ -107,9 +111,9 @@ public class HandleFile{
             {
                 line = linea.split(";");
                 if (line[2].equals("1")) {
-                    res.add(new Vehiculo(line[0],line[1],true,parseDate(line[3])));
+                    res.add(new Vehiculo(line[0],line[1],true,Integer.parseInt(line[3]),parseDate(line[4])));
                 } else {
-                    res.add(new Vehiculo(line[0],line[1],false,parseDate(line[3])));
+                    res.add(new Vehiculo(line[0],line[1],false,Integer.parseInt(line[3]),parseDate(line[4])));
                 }
                 
             }
@@ -128,9 +132,8 @@ public class HandleFile{
     {
         
         try {
-            Date dt = new Date();
-            String linea  = line;
-            bufferWriter.write(linea+" "+this.formatoFecha.format(dt) +" \n");
+            
+            bufferWriter.write(line+"\n");
             
             return true;
         } catch(Exception e) {

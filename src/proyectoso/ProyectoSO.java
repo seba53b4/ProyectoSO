@@ -23,16 +23,23 @@ public class ProyectoSO {
      */
     public static void main(String[] args) throws InterruptedException {
         
-        HandleFile.initHandeFile();
+        HandleFile.getInstance();
         Peaje peaje = new Peaje();
         BancoDatos.initBancoDatos(115.0, 195.0, 195.0);
+        Reloj reloj = new Reloj(10, 21, 40, 00, 3, 5, 2020);
+        
+        reloj.start();
         peaje.iniciar();
+        
+        
+        
         
         System.out.println("Cantidad de vehiculos: " + BancoDatos.getBancoDatos().getCantidadVehiculos());
         System.out.println("Costo operativo: " + BancoDatos.getBancoDatos().getCostoOperativo());
         System.out.println("Recaudacion: " + BancoDatos.getBancoDatos().getRecaudacion());
         
         
+        reloj.stop();
        /* ArrayList<IVehiculo> vehiculos = new ArrayList<>();
         
         vehiculos.add(new Camion());

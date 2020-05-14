@@ -23,6 +23,8 @@ public class Casilla extends Thread{
     private int numeroCasilla;
     private PriorityQueue<IVehiculo> enEspera; //
     private boolean habilitada;
+    
+   
 
     public void setHabilitada(boolean habilitada) {
         this.habilitada = habilitada;
@@ -44,6 +46,7 @@ public class Casilla extends Thread{
         numeroCasilla = numCasilla;
         telepeaje = tel;
         accesoCasilla = new Semaphore(1);
+        
     }
     
     @Override
@@ -51,26 +54,35 @@ public class Casilla extends Thread{
         try {
             // Agarra un vehiculo y lo procesa
             
-            while (!enEspera.isEmpty()) {
-                System.out.println("Ingresa  en casilla " + this.numeroCasilla +"con lista espera " +this.enEspera.size()+" el vehiculo: " +enEspera.peek().getTipo());
                 
-                accesoCasilla.acquire();
-                IVehiculo aux = enEspera.poll();
-                sleep(500);
-                System.out.println("Procesa casilla " + this.numeroCasilla +" el vehiculo: " + aux.getTipo());
-                BancoDatos.getBancoDatos().incCantidadVehiculos();
-                BancoDatos.getBancoDatos().aumentarRecaudacion(aux.getTipo());
-                BancoDatos.getBancoDatos().aumentarCostoOperativo(45.0);
-                HandleFile.initHandeFile().writeArchivo("En casilla "+ this.numeroCasilla +" paso un " + aux.getTipo() );
-                
-                accesoCasilla.release();
-            }
-            if (this.numeroCasilla >= 2) {
-                this.setHabilitada(false);
-            }
+                if (enEspera.isEmpty()) {
+                    System.out.println("en espera vacia casilla"+ this.numeroCasilla);
+                } else {
+                    System.out.println("en espera con elem casilla "+ this.numeroCasilla+ " elem "+ enEspera.size());
+                }
+                while (!enEspera.isEmpty()) {
+                    System.out.println("Ingresa  en casilla " + this.numeroCasilla +"con lista espera " +this.enEspera.size()+" el vehiculo: " +enEspera.peek().getTipo()+ "de mat: " + enEspera.peek().getMatricula());
+                    accesoCasilla.acquire();
+                    IVehiculo aux = enEspera.poll();
+                    //sleep(500);
+                    System.out.println("Procesa casilla " + this.numeroCasilla +" el vehiculo: " + aux.getTipo() + "de mat: " + aux.getMatricula());
+                    BancoDatos.getBancoDatos().incCantidadVehiculos();
+                    BancoDatos.getBancoDatos().aumentarRecaudacion(aux.getTipo());
+                    BancoDatos.getBancoDatos().aumentarCostoOperativo(45.0);
+                    synchronized(Reloj.getInstance()){
+                        System.out.println("hora al pasar"+ Reloj.getInstance().getHora());
+                        HandleFile.getInstance().writeArchivo("["+Thread.currentThread().getName()+"]"+" En casilla ["+ this.numeroCasilla +"] paso un " + aux.getTipo()+ " Matricula "
+                                + "["+aux.getMatricula()+"] la hora "+ Reloj.getInstance().getHora());
+                    }
+                    accesoCasilla.release();
+                }
+            
+            
         } catch (InterruptedException ex) {
             Logger.getLogger(Casilla.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        
         
     }
 

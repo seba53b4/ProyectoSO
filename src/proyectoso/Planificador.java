@@ -11,4 +11,11 @@ package proyectoso;
  */
 public class Planificador {
     
+    
+    
+    public void planificar(){
+    
+    }
+    
+    
 }

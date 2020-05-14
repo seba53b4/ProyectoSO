@@ -23,7 +23,7 @@ import java.util.Random;
  */
 public class Peaje{
 
-    private Queue<IVehiculo> vehiculos;//archivo.lenght];
+    public static Queue<IVehiculo> vehiculos;//archivo.lenght];
     private Casilla[] casillas;
    
    
@@ -32,16 +32,17 @@ public class Peaje{
     public Peaje(){
         
         casillas = new Casilla[5];
-        casillas[0] = new Casilla(0, true,true);
-        casillas[1] = new Casilla(1, true,true);
+        casillas[0] = new Casilla(0, true,false);
+        casillas[1] = new Casilla(1, true,false);
+        
         casillas[2] = new Casilla(2, true,false);
         casillas[3] = new Casilla(3, true,false);
         casillas[4] = new Casilla(4, true,false);
-        vehiculos = HandleFile.initHandeFile().cargaArchivo();
+        vehiculos = HandleFile.getInstance().cargaArchivo();
         
     }
     
-    public void iniciar() {
+    public void iniciar() throws InterruptedException {
         
         
         int iter = 0;
@@ -53,45 +54,49 @@ public class Peaje{
         
         IVehiculo veh;
         Casilla elegida;
+        
+        
         while (!vehiculos.isEmpty()) {
-            if (Reloj.hora() >= vehiculos.peek().DAte){
-                veh = vehiculos.poll();
-                elegida = siguienteHabilitada();
-                elegida.addVehiculoEnEspera(veh);
-                if (!elegida.isAlive()) {
-                    elegida.start();
-                    elegida.setHabilitada(true);
+            //System.out.println("Hora proximo reloj: "+ Reloj.getInstance().getHora());
+            //System.out.println("Hora proximo vehiculo: "+ HandleFile.getInstance().getFormatoFecha().format(vehiculos.peek().getTime()));
+            synchronized (Reloj.getInstance()){
+                if (Reloj.getInstance().getDate().compareTo(vehiculos.peek().getTime()) == 0){
+                    System.out.println("Hora proximo reloj: "+ Reloj.getInstance().getHora());
+                    System.out.println("Hora proximo vehiculo: "+ HandleFile.getInstance().getFormatoFecha().format(vehiculos.peek().getTime()));
+                    veh = vehiculos.poll();
+                    elegida = siguienteHabilitada();
+                    
+                    elegida.addVehiculoEnEspera(veh);
+                    
+                    /*if (elegida.getEnEspera().isEmpty()) {
+                        System.out.println("es vacia");
+                    } else {
+                        System.out.println("no es vacia");
+                    }
+                    if (!elegida.isHabilitado()) {
+                        
+                        elegida.setHabilitada(true);
+                        elegida.start();
+                        
+                    }*/
+                    
+                    
                 }
-            }
-            
-            
-            
-            
+                    
+            } 
             
         }
-        /*while lsita de veh no vacia 
-                if (reloj.tiempo >= veh.peek)
-                    
-                    if emeregencia 
-                            ver si hay casilla libre */
-                                    
-        // aca deberia ir la logica de controlar las vias habilitadas y los eventos de emergencia. Podria ser con otra clase planificacdor o en esta misma clase.
-        // A su vez las casillas no deberian finalizar si quedan sus listas enEspera vacias, si no terminan antes que se vuelva a mandar otros vehiculos.
-        //Nota. 1- Todavia no se si esta clase deberia ser un thread..
-        //      2- Falta hacer el Reloj
-        
-        
+        for (Casilla casilla : casillas) {
+            casilla.setHabilitada(true);
+            casilla.start();
+        }
         
         for (Casilla casilla : casillas) {
-            try {
-                casilla.join();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Peaje.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            casilla.setHabilitada(false);
+            casilla.join();
         }
         
-        
-        HandleFile.initHandeFile().closeArchivoWriter();
+        HandleFile.getInstance().closeArchivoWriter();
     }
     
     public Casilla siguienteHabilitada(){
