@@ -39,13 +39,16 @@ public class HandleFile{
     private final SimpleDateFormat formatoFecha;
     
     
-    public static HandleFile initHandeFile(){
+    public static HandleFile getInstance(){
         if (hf == null) {
             hf = new HandleFile();
         }
         return hf;
     }
     
+    public SimpleDateFormat getFormatoFecha(){
+        return this.formatoFecha;
+    }
     
     public HandleFile()
     {        
