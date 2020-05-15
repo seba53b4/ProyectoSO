@@ -1,6 +1,5 @@
-#tipo;matricula;telepeaje;demora;tiempo
-auto;number1;0;2;21:40:04 03-05-2020
-auto;number2;0;1;21:41:24 03-05-2020
-auto;number3;0;3;21:42:14 03-05-2020
-auto;number4;0;4;21:43:24 03-05-2020
-auto;number5;0;5;21:44:14 03-05-2020
+#tipo;matricula;telepeaje;tiempo
+auto;123abc;0;1;21:40:04 03-05-2020
+auto;123abd;0;2;21:40:24 03-05-2020
+auto;123abe;0;1;21:40:44 03-05-2020
+auto;123aba;0;3;21:40:44 03-05-2020

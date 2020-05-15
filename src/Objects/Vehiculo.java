@@ -13,22 +13,18 @@ import java.util.Date;
  */
 public class Vehiculo implements IVehiculo{
 
-    private final String tipo;
-    private final String matricula;
-    private final boolean telepeaje;
-    private final Date horaLlegada;
-    private final int demora;
+    private String tipo;
+    private String matricula;
+    private boolean telepeaje;
+    private Date horaLlegada;
+    private int espera;
     
-    public Vehiculo(String type,String mat,boolean telep, int demora,Date time){
+    public Vehiculo(String type,String mat,boolean telep,int espera,Date time ){
         tipo = type;
         matricula = mat;
         telepeaje = telep;
         horaLlegada = time;
-        this.demora = demora;
-    }
-
-    public int getDemora() {
-        return demora;
+        this.espera = espera;
     }
     
     @Override

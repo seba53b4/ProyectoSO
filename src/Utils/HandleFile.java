@@ -47,7 +47,7 @@ public class HandleFile{
     }
     
     public SimpleDateFormat getFormatoFecha(){
-        return formatoFecha;
+        return this.formatoFecha;
     }
     
     public HandleFile()
@@ -86,7 +86,6 @@ public class HandleFile{
         Date fechaDate = null;
         try {
             fechaDate = formatoFecha.parse(date);
-            System.out.println("fecha date en carga: "+ formatoFecha.format(fechaDate).toString());
         } 
         catch (ParseException ex) 
         {
@@ -133,7 +132,7 @@ public class HandleFile{
         
         try {
             
-            bufferWriter.write(line+"\n");
+            bufferWriter.write(line+" \n");
             
             return true;
         } catch(Exception e) {

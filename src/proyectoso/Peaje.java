@@ -11,11 +11,14 @@ import Objects.IVehiculo;
 import Objects.Omnibus;
 import Utils.HandleFile;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 // uso solo para pruebas
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 /**
  *
@@ -23,79 +26,82 @@ import java.util.Random;
  */
 public class Peaje{
 
-    public static Queue<IVehiculo> vehiculos;//archivo.lenght];
+    private Queue<IVehiculo> vehiculos;//archivo.lenght];
     private Casilla[] casillas;
+    private  PriorityQueue<IVehiculo>[] enEspera;
+    public Semaphore semaforo = new Semaphore(1);
+    public Queue<Thread> hilos;
+    
+    
+    public static Peaje peaje;
    
-   
+    public static Peaje getInstance(){
+        return peaje;
+    }
   
     
     public Peaje(){
         
         casillas = new Casilla[5];
-        casillas[0] = new Casilla(0, true,false);
-        casillas[1] = new Casilla(1, true,false);
-        
+        casillas[0] = new Casilla(0, true,true);
+        casillas[1] = new Casilla(1, true,true);
         casillas[2] = new Casilla(2, true,false);
         casillas[3] = new Casilla(3, true,false);
         casillas[4] = new Casilla(4, true,false);
+
         vehiculos = HandleFile.getInstance().cargaArchivo();
         
+    
+
+        
+        enEspera = new PriorityQueue[5];
+        
+        for (int i = 0; i < enEspera.length; i++) {
+            enEspera[i] = new PriorityQueue<>();
+        }
+        
+       
+        
+        peaje = this;
+        hilos = new LinkedList();
+        
+    }
+    
+    public synchronized IVehiculo getHead(){
+        return this.vehiculos.poll();
     }
     
     public void iniciar() throws InterruptedException {
         
-        
-        int iter = 0;
-        Random generador = new Random(); // generador de numeros random para pruebas, los vehiculos caen en las casillas de manera random.
-        
-        /*for (IVehiculo veh : vehiculos) {
-            casillas[generador.nextInt(4)].addVehiculoEnEspera(veh);
-        }*/
-        
+        casillas[0].setHabilitada(true);
+        Thread aux;
+//            System.out.println("Hora reloj: "+ Reloj.getInstance().getHora());
+//            System.out.println("Hora proximo vehiculo: "+ HandleFile.getInstance().getFormatoFecha().format(vehiculos.peek().getTime()));
         IVehiculo veh;
-        Casilla elegida;
-        
-        
         while (!vehiculos.isEmpty()) {
-            //System.out.println("Hora proximo reloj: "+ Reloj.getInstance().getHora());
-            //System.out.println("Hora proximo vehiculo: "+ HandleFile.getInstance().getFormatoFecha().format(vehiculos.peek().getTime()));
             synchronized (Reloj.getInstance()){
-                if (Reloj.getInstance().getDate().compareTo(vehiculos.peek().getTime()) == 0){
-                    System.out.println("Hora proximo reloj: "+ Reloj.getInstance().getHora());
-                    System.out.println("Hora proximo vehiculo: "+ HandleFile.getInstance().getFormatoFecha().format(vehiculos.peek().getTime()));
-                    veh = vehiculos.poll();
-                    elegida = siguienteHabilitada();
-                    
-                    elegida.addVehiculoEnEspera(veh);
-                    
-                    /*if (elegida.getEnEspera().isEmpty()) {
-                        System.out.println("es vacia");
-                    } else {
-                        System.out.println("no es vacia");
-                    }
-                    if (!elegida.isHabilitado()) {
-                        
-                        elegida.setHabilitada(true);
-                        elegida.start();
-                        
-                    }*/
-                    
-                    
+                 
+                if (vehiculos.peek() != null && Reloj.getInstance().getDate().compareTo(vehiculos.peek().getTime()) == 0){
+                      veh = vehiculos.poll();
+//                    System.out.println("Hora proximo reloj: "+ Reloj.getInstance().getHora());
+//                    System.out.println("Hora proximo vehiculo: "+ HandleFile.getInstance().getFormatoFecha().format(vehiculos.peek().getTime()));
+
+
+                    //synchronized(casillas){
+                        if (casillas[0].getEstado()) {
+                           System.out.println("entra casilla 0 el vehiculo "+ veh.getMatricula());
+                            casillas[0].addVehiculoEnEspera(veh);
+                            aux = new Thread(casillas[0]);
+                            hilos.add(aux);
+                            aux.start();
+                        }
+                    //}
                 }
-                    
-            } 
-            
+            }
         }
-        for (Casilla casilla : casillas) {
-            casilla.setHabilitada(true);
-            casilla.start();
+        for (Thread hilo : hilos) {
+            hilo.join();
         }
-        
-        for (Casilla casilla : casillas) {
-            casilla.setHabilitada(false);
-            casilla.join();
-        }
-        
         HandleFile.getInstance().closeArchivoWriter();
     }
     

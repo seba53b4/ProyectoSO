@@ -5,15 +5,14 @@
  */
 package proyectoso;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Encagada de simular el tiempo
  * @author Seba-OS
  */
+
 public class Reloj extends Thread{
     
     private int segundos, horas, minutos, dia,mes,año, speed;
@@ -25,11 +24,11 @@ public class Reloj extends Thread{
     //Thread h1;
     
     
-    public static Reloj getInstance(){
+    public synchronized static Reloj getInstance(){
        return reloj;
     }
     
-    public String getHora(){
+    public synchronized String getHora(){
         return formatoFecha.format(this.date);
     }
     
@@ -109,7 +108,7 @@ public class Reloj extends Thread{
             
             String fechaAux = ""+this.horas+":"+this.minutos+":"+this.segundos+" "+this.dia+"-"+this.mes+"-"+this.año;
             this.date = ParseFecha(fechaAux);
-            //System.out.println("Reloj hora: "+ formatoFecha.format(this.date));
+            System.out.println("Reloj hora: "+ formatoFecha.format(this.date));
             
         }
     }
@@ -123,6 +122,6 @@ public class Reloj extends Thread{
     public Date getDate(){
         return this.date;
     }
+
     
-   
 }
