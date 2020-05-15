@@ -11,11 +11,14 @@ import Objects.IVehiculo;
 import Objects.Omnibus;
 import Utils.HandleFile;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 // uso solo para pruebas
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 /**
  *
@@ -25,8 +28,16 @@ public class Peaje{
 
     private Queue<IVehiculo> vehiculos;//archivo.lenght];
     private Casilla[] casillas;
+    private  PriorityQueue<IVehiculo>[] enEspera;
+    public Semaphore semaforo = new Semaphore(1);
+    public Queue<Thread> hilos;
+    
+    
+    public static Peaje peaje;
    
-   
+    public static Peaje getInstance(){
+        return peaje;
+    }
   
     
     public Peaje(){
@@ -37,61 +48,61 @@ public class Peaje{
         casillas[2] = new Casilla(2, true,false);
         casillas[3] = new Casilla(3, true,false);
         casillas[4] = new Casilla(4, true,false);
-        vehiculos = HandleFile.initHandeFile().cargaArchivo();
+
+        vehiculos = HandleFile.getInstance().cargaArchivo();
+        
+    
+
+        
+        enEspera = new PriorityQueue[5];
+        
+        for (int i = 0; i < enEspera.length; i++) {
+            enEspera[i] = new PriorityQueue<>();
+        }
+        
+       
+        
+        peaje = this;
+        hilos = new LinkedList();
         
     }
     
-    public void iniciar() {
+    public synchronized IVehiculo getHead(){
+        return this.vehiculos.poll();
+    }
+    
+    public void iniciar() throws InterruptedException {
         
-        
-        int iter = 0;
-        Random generador = new Random(); // generador de numeros random para pruebas, los vehiculos caen en las casillas de manera random.
-        
-        /*for (IVehiculo veh : vehiculos) {
-            casillas[generador.nextInt(4)].addVehiculoEnEspera(veh);
-        }*/
-        
+        casillas[0].setHabilitada(true);
+        Thread aux;
+//            System.out.println("Hora reloj: "+ Reloj.getInstance().getHora());
+//            System.out.println("Hora proximo vehiculo: "+ HandleFile.getInstance().getFormatoFecha().format(vehiculos.peek().getTime()));
         IVehiculo veh;
-        Casilla elegida;
         while (!vehiculos.isEmpty()) {
-            if (Reloj.hora() >= vehiculos.peek().DAte){
-                veh = vehiculos.poll();
-                elegida = siguienteHabilitada();
-                elegida.addVehiculoEnEspera(veh);
-                if (!elegida.isAlive()) {
-                    elegida.start();
-                    elegida.setHabilitada(true);
+            synchronized (Reloj.getInstance()){
+                 
+                if (vehiculos.peek() != null && Reloj.getInstance().getDate().compareTo(vehiculos.peek().getTime()) == 0){
+                      veh = vehiculos.poll();
+//                    System.out.println("Hora proximo reloj: "+ Reloj.getInstance().getHora());
+//                    System.out.println("Hora proximo vehiculo: "+ HandleFile.getInstance().getFormatoFecha().format(vehiculos.peek().getTime()));
+
+
+                    //synchronized(casillas){
+                        if (casillas[0].getEstado()) {
+                           System.out.println("entra casilla 0 el vehiculo "+ veh.getMatricula());
+                            casillas[0].addVehiculoEnEspera(veh);
+                            aux = new Thread(casillas[0]);
+                            hilos.add(aux);
+                            aux.start();
+                        }
+                    //}
                 }
             }
-            
-            
-            
-            
-            
         }
-        /*while lsita de veh no vacia 
-                if (reloj.tiempo >= veh.peek)
-                    
-                    if emeregencia 
-                            ver si hay casilla libre */
-                                    
-        // aca deberia ir la logica de controlar las vias habilitadas y los eventos de emergencia. Podria ser con otra clase planificacdor o en esta misma clase.
-        // A su vez las casillas no deberian finalizar si quedan sus listas enEspera vacias, si no terminan antes que se vuelva a mandar otros vehiculos.
-        //Nota. 1- Todavia no se si esta clase deberia ser un thread..
-        //      2- Falta hacer el Reloj
-        
-        
-        
-        for (Casilla casilla : casillas) {
-            try {
-                casilla.join();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Peaje.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        for (Thread hilo : hilos) {
+            hilo.join();
         }
-        
-        
-        HandleFile.initHandeFile().closeArchivoWriter();
+        HandleFile.getInstance().closeArchivoWriter();
     }
     
     public Casilla siguienteHabilitada(){

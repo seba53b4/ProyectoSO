@@ -17,12 +17,14 @@ public class Vehiculo implements IVehiculo{
     private String matricula;
     private boolean telepeaje;
     private Date horaLlegada;
+    private int espera;
     
-    public Vehiculo(String type,String mat,boolean telep,Date time ){
+    public Vehiculo(String type,String mat,boolean telep,int espera,Date time ){
         tipo = type;
         matricula = mat;
         telepeaje = telep;
         horaLlegada = time;
+        this.espera = espera;
     }
     
     @Override

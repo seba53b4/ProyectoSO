@@ -18,17 +18,41 @@ import java.util.logging.Logger;
  *
  * @author Seba-OS
  */
-public class Casilla extends Thread{
+public class Casilla implements Runnable{
 
     private int numeroCasilla;
     private PriorityQueue<IVehiculo> enEspera; //
     private boolean habilitada;
 
-    public void setHabilitada(boolean habilitada) {
-        this.habilitada = habilitada;
-    }
+    public MonitorEntrada monitorEntrada;
+    public int cantEspera;
     private boolean telepeaje;
     private Semaphore accesoCasilla;
+    private IVehiculo aProcesar;
+    
+    public synchronized void set_aProcesar(IVehiculo v){
+        this.aProcesar = v;
+    }
+    
+    
+    public int getCantEspera() {
+        return cantEspera;
+    }
+    
+    public MonitorEntrada getMonitor(){
+        return monitorEntrada;
+    }
+    
+    public boolean getEstado(){
+        return monitorEntrada.getHabilitada();
+    }
+    
+  
+
+
+    public synchronized void setHabilitada(boolean habilitada) {
+        this.monitorEntrada.setEstado(habilitada);
+    }
     
     public synchronized Queue<IVehiculo> getEnEspera() { //
         return enEspera;
@@ -44,31 +68,52 @@ public class Casilla extends Thread{
         numeroCasilla = numCasilla;
         telepeaje = tel;
         accesoCasilla = new Semaphore(1);
+        monitorEntrada = new MonitorEntrada(false);
+        
+        cantEspera = 0;
+
     }
+    
+    
+    
     
     @Override
     public void run() {
         try {
-            // Agarra un vehiculo y lo procesa
+
             
-            while (!enEspera.isEmpty()) {
-                System.out.println("Ingresa  en casilla " + this.numeroCasilla +"con lista espera " +this.enEspera.size()+" el vehiculo: " +enEspera.peek().getTipo());
+                synchronized(monitorEntrada){
+                    monitorEntrada.evaluarEstado();
+                }
+                    //accesoCasilla.acquire();
+                    this.habilitada = false;
+                    
+                    System.out.println("Thread "+ Thread.currentThread().getName()+ " entro en casilla "+ this.getNumeroCasilla());
                 
-                accesoCasilla.acquire();
-                IVehiculo aux = enEspera.poll();
-                sleep(500);
-                System.out.println("Procesa casilla " + this.numeroCasilla +" el vehiculo: " + aux.getTipo());
-                BancoDatos.getBancoDatos().incCantidadVehiculos();
-                BancoDatos.getBancoDatos().aumentarRecaudacion(aux.getTipo());
-                BancoDatos.getBancoDatos().aumentarCostoOperativo(45.0);
-                HandleFile.initHandeFile().writeArchivo("En casilla "+ this.numeroCasilla +" paso un " + aux.getTipo() );
+                    while (!enEspera.isEmpty()) {
+                        
+                        
+                        IVehiculo aux =  enEspera.poll();//this.aProcesar;
+                        
+                        //System.out.println("Ingresa  en casilla " + this.numeroCasilla +"con lista espera " +this.enEspera.size()+" el vehiculo: " +enEspera.peek().getTipo()+ "de mat: " + enEspera.peek().getMatricula());
+                        System.out.println("Procesa casilla " + this.numeroCasilla +" el vehiculo: " + aux.getTipo() + "de mat: " + aux.getMatricula());
+                        BancoDatos.getBancoDatos().incCantidadVehiculos();
+                        BancoDatos.getBancoDatos().aumentarRecaudacion(aux.getTipo());
+                        BancoDatos.getBancoDatos().aumentarCostoOperativo(45.0);
+                        // accesoCasilla.release();
+                        
+                        
+                        synchronized(Reloj.getInstance()){
+                            System.out.println("hora al pasar"+ Reloj.getInstance().getHora());
+                            HandleFile.getInstance().writeArchivo("["+Thread.currentThread().getName()+"]"+" En casilla ["+ this.numeroCasilla +"] paso un " + aux.getTipo()+ " Matricula "
+                                    + "["+aux.getMatricula()+"] la hora "+ Reloj.getInstance().getHora());
+                        }
+                        
+                    }
                 
-                accesoCasilla.release();
-            }
-            if (this.numeroCasilla >= 2) {
-                this.setHabilitada(false);
-            }
-        } catch (InterruptedException ex) {
+                
+            
+        } catch (Exception ex) {
             Logger.getLogger(Casilla.class.getName()).log(Level.SEVERE, null, ex);
         }
         
@@ -78,7 +123,7 @@ public class Casilla extends Thread{
         return numeroCasilla;
     }
     
-    public void addVehiculoEnEspera(IVehiculo veh){
+    public synchronized void addVehiculoEnEspera(IVehiculo veh){
         this.enEspera.add(veh);
     }
     

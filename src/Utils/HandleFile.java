@@ -53,7 +53,7 @@ public class HandleFile{
     public HandleFile()
     {        
           dir = System.getProperty("user.dir");// + "\\":
-          File f = new File(dir+"//salida.txt");
+          File f = new File(dir+"//salida.csv");
           try {
               fw = new FileWriter(f,true);
           } catch (IOException ex) {
@@ -110,9 +110,9 @@ public class HandleFile{
             {
                 line = linea.split(";");
                 if (line[2].equals("1")) {
-                    res.add(new Vehiculo(line[0],line[1],true,parseDate(line[3])));
+                    res.add(new Vehiculo(line[0],line[1],true,Integer.parseInt(line[3]),parseDate(line[4])));
                 } else {
-                    res.add(new Vehiculo(line[0],line[1],false,parseDate(line[3])));
+                    res.add(new Vehiculo(line[0],line[1],false,Integer.parseInt(line[3]),parseDate(line[4])));
                 }
                 
             }
@@ -131,9 +131,8 @@ public class HandleFile{
     {
         
         try {
-            Date dt = new Date();
-            String linea  = line;
-            bufferWriter.write(linea+" "+this.formatoFecha.format(dt) +" \n");
+            
+            bufferWriter.write(line+" \n");
             
             return true;
         } catch(Exception e) {
