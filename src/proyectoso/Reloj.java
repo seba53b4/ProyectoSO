@@ -23,6 +23,9 @@ public class Reloj extends Thread{
     //Calendar calentario;
     //Thread h1;
     
+    public int getRazonCambio(){
+        return speed;
+    }
     
     public synchronized static Reloj getInstance(){
        return reloj;

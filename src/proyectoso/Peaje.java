@@ -82,6 +82,7 @@ public class Peaje{
 //            System.out.println("Hora reloj: "+ Reloj.getInstance().getHora());
 //            System.out.println("Hora proximo vehiculo: "+ HandleFile.getInstance().getFormatoFecha().format(vehiculos.peek().getTime()));
         IVehiculo veh;
+        casillas[0].setHabilitada(true);
         while (!vehiculos.isEmpty()) {
             synchronized (Reloj.getInstance()){
                  
@@ -91,7 +92,7 @@ public class Peaje{
 //                    System.out.println("Hora proximo vehiculo: "+ HandleFile.getInstance().getFormatoFecha().format(vehiculos.peek().getTime()));
 
                     
-                        if (casillas[0].getEstado() && casillas[4].getCantEspera() < 3) {
+                        if (casillas[0].getEnEspera().size()  <= 3) {
                            System.out.println("entra casilla 0 el vehiculo "+ veh.getMatricula());
                             casillas[0].addVehiculoEnEspera(veh);
                             aux = new Thread(casillas[0]);
@@ -100,7 +101,7 @@ public class Peaje{
                             continue;
                         }
                     
-                        if (casillas[1].getEstado() && casillas[4].getCantEspera() < 3) {
+                        if (casillas[1].getEstado() && casillas[1].getCantEspera() < 3) {
                            System.out.println("entra casilla 1 el vehiculo "+ veh.getMatricula());
                             casillas[1].addVehiculoEnEspera(veh);
                             aux = new Thread(casillas[1]);
@@ -109,7 +110,7 @@ public class Peaje{
                             continue;
                         }
                     //}
-                        if (casillas[2].getEstado() && casillas[4].getCantEspera() < 3) {
+                        if (casillas[2].getEstado() && casillas[1].getCantEspera() < 3) {
                            System.out.println("entra casilla 2 el vehiculo "+ veh.getMatricula());
                             casillas[2].addVehiculoEnEspera(veh);
                             aux = new Thread(casillas[2]);
@@ -118,7 +119,7 @@ public class Peaje{
                             continue;
                         }
                     //}
-                        if (casillas[3].getEstado() && casillas[4].getCantEspera() < 3) {
+                        if (casillas[3].getEstado() && casillas[1].getCantEspera() < 3) {
                            System.out.println("entra casilla 3 el vehiculo "+ veh.getMatricula());
                             casillas[3].addVehiculoEnEspera(veh);
                             aux = new Thread(casillas[3]);
@@ -127,7 +128,7 @@ public class Peaje{
                             continue;
                         }
                     //}
-                        if (casillas[4].getEstado() && casillas[4].getCantEspera() < 3) {
+                        if (casillas[4].getEstado() && casillas[1].getCantEspera() < 3) {
                            System.out.println("entra casilla 4 el vehiculo "+ veh.getMatricula());
                             casillas[4].addVehiculoEnEspera(veh);
                             aux = new Thread(casillas[4]);

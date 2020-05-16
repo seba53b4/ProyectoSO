@@ -20,6 +20,9 @@ public class MonitorEntrada {
         habilitado = av;
         
     }
+    public synchronized void setHabilitada(boolean bol){
+        this.habilitado = bol;
+    }
     public synchronized boolean getHabilitada(){
         return this.habilitado;
     }
