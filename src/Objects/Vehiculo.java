@@ -18,6 +18,10 @@ public class Vehiculo implements IVehiculo{
     private boolean telepeaje;
     private Date horaLlegada;
     private int espera;
+
+    public int getEspera() {
+        return espera;
+    }
     
     public Vehiculo(String type,String mat,boolean telep,int espera,Date time ){
         tipo = type;

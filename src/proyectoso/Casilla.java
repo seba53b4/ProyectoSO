@@ -7,6 +7,7 @@ package proyectoso;
 
 import Objects.IVehiculo;
 import Utils.HandleFile;
+import java.util.Date;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.Semaphore;
@@ -67,7 +68,7 @@ public class Casilla implements Runnable{
         habilitada = av;
         numeroCasilla = numCasilla;
         telepeaje = tel;
-        accesoCasilla = new Semaphore(1);
+        accesoCasilla = new Semaphore(0);
         monitorEntrada = new MonitorEntrada(false);
         
         cantEspera = 0;
@@ -82,36 +83,55 @@ public class Casilla implements Runnable{
         try {
 
             
-                synchronized(monitorEntrada){
-                    monitorEntrada.evaluarEstado();
-                }
-                    //accesoCasilla.acquire();
-                    this.habilitada = false;
+            
+//            monitorEntrada.setEstado(false);
                     
+//                    System.out.println("en espera semaforo " + accesoCasilla.getQueueLength() + " soy el hilo " + Thread.currentThread().getName());
+//                    accesoCasilla.acquire();
+                    synchronized(monitorEntrada){
+                        monitorEntrada.evaluarEstado();
+                    }
+                    this.monitorEntrada.setEstado(false);
                     System.out.println("Thread "+ Thread.currentThread().getName()+ " entro en casilla "+ this.getNumeroCasilla());
-                
-                    while (!enEspera.isEmpty()) {
-                        
-                        
-                        IVehiculo aux =  enEspera.poll();//this.aProcesar;
-                        
+
+                    IVehiculo aux =  enEspera.poll();//this.aProcesar;
+                    //Thread.sleep(500);
+                    
+                    System.out.println("Hora entrada" + Reloj.getInstance().getHora());
+                    int wait = Reloj.getInstance().getDate().getSeconds()+aux.getEspera();
+                    Date horaSalida = Reloj.getInstance().getDate();
+                    horaSalida.setSeconds(wait);
+
+                    System.out.println("Hora de salida "+horaSalida.toString());
+
+
+                    if (Reloj.getInstance().getDate().compareTo(horaSalida) == 0) {
+                        System.out.println("ACAAAAAA paso ansu fati " + Reloj.getInstance().getHora());
                         //System.out.println("Ingresa  en casilla " + this.numeroCasilla +"con lista espera " +this.enEspera.size()+" el vehiculo: " +enEspera.peek().getTipo()+ "de mat: " + enEspera.peek().getMatricula());
                         System.out.println("Procesa casilla " + this.numeroCasilla +" el vehiculo: " + aux.getTipo() + "de mat: " + aux.getMatricula());
                         BancoDatos.getBancoDatos().incCantidadVehiculos();
                         BancoDatos.getBancoDatos().aumentarRecaudacion(aux.getTipo());
                         BancoDatos.getBancoDatos().aumentarCostoOperativo(45.0);
                         // accesoCasilla.release();
-                        
-                        
-                        synchronized(Reloj.getInstance()){
-                            System.out.println("hora al pasar"+ Reloj.getInstance().getHora());
-                            HandleFile.getInstance().writeArchivo("["+Thread.currentThread().getName()+"]"+" En casilla ["+ this.numeroCasilla +"] paso un " + aux.getTipo()+ " Matricula "
-                                    + "["+aux.getMatricula()+"] la hora "+ Reloj.getInstance().getHora());
-                        }
-                        
+                    synchronized(Reloj.getInstance()){
+                        HandleFile.getInstance().writeArchivo("["+Thread.currentThread().getName()+"]"+" En casilla ["+ this.numeroCasilla +"] paso un " + aux.getTipo()+ " Matricula "
+                                + "["+aux.getMatricula()+"] la hora "+ Reloj.getInstance().getHora());
                     }
-                
-                
+                }
+
+
+                //accesoCasilla.release();
+            //                monitorEntrada.setEstado(true);
+            //                synchronized(monitorEntrada){
+            //                    monitorEntrada.evaluarEstado();
+            //                }
+                    //accesoCasilla.release();
+                     synchronized(monitorEntrada){
+                        monitorEntrada.evaluarEstado();
+                    }
+                    this.monitorEntrada.setEstado(true);
+                    
+            
             
         } catch (Exception ex) {
             Logger.getLogger(Casilla.class.getName()).log(Level.SEVERE, null, ex);

@@ -108,7 +108,7 @@ public class Reloj extends Thread{
             
             String fechaAux = ""+this.horas+":"+this.minutos+":"+this.segundos+" "+this.dia+"-"+this.mes+"-"+this.año;
             this.date = ParseFecha(fechaAux);
-            System.out.println("Reloj hora: "+ formatoFecha.format(this.date));
+            //System.out.println("Reloj hora: "+ formatoFecha.format(this.date));
             
         }
     }

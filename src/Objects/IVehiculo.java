@@ -17,5 +17,6 @@ public abstract interface IVehiculo extends Comparable<IVehiculo>{
     public boolean getTelepeaje();
     public String getMatricula();
     public Date getTime();
+    public int getEspera();
     
 }
