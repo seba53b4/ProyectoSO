@@ -84,7 +84,7 @@ public class Peaje{
         IVehiculo veh;
         casillas[0].setHabilitada(true);
         while (!vehiculos.isEmpty()) {
-            synchronized (Reloj.getInstance()){
+            
                  
                 if (vehiculos.peek() != null && Reloj.getInstance().getDate().compareTo(vehiculos.peek().getTime()) == 0){
                       veh = vehiculos.poll();
@@ -94,10 +94,12 @@ public class Peaje{
                     
                         if (casillas[0].getEnEspera().size()  <= 3) {
                            System.out.println("entra casilla 0 el vehiculo "+ veh.getMatricula());
+                            semaforo.acquire();
                             casillas[0].addVehiculoEnEspera(veh);
                             aux = new Thread(casillas[0]);
                             hilos.add(aux);
                             aux.start();
+                            semaforo.release();
                             continue;
                         }
                     
@@ -137,7 +139,7 @@ public class Peaje{
                             continue;
                         }
                     //}
-                }
+                
             }
         }
         for (Thread hilo : hilos) {

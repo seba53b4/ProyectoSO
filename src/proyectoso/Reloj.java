@@ -122,7 +122,7 @@ public class Reloj extends Thread{
     }
     
     
-    public Date getDate(){
+    public synchronized Date getDate(){
         return this.date;
     }
 
