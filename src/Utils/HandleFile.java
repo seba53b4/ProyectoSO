@@ -67,6 +67,16 @@ public class HandleFile{
           bufferWriter = new BufferedWriter(fw);
           formatoFecha = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
           
+          try {
+            
+            bufferWriter.write("Hilo;Casilla;Tipo;Matricula;Hora Entrada;Hora Salida"+" \n");
+            
+            
+        } catch(Exception e) {
+            System.out.println("Excepcion leyendo fichero" + e);
+            
+        }
+          
           
     }
 
@@ -108,11 +118,15 @@ public class HandleFile{
             br.readLine();
             while((linea = br.readLine()) != null)
             {
-                line = linea.split(";");
-                if (line[2].equals("1")) {
-                    res.add(new Vehiculo(line[0],line[1],true,Integer.parseInt(line[3]),parseDate(line[4])));
-                } else {
-                    res.add(new Vehiculo(line[0],line[1],false,Integer.parseInt(line[3]),parseDate(line[4])));
+                if (!linea.contains("#")) {
+                    
+                    
+                    line = linea.split(";");
+                    if (line[2].equals("1")) {
+                        res.add(new Vehiculo(line[0],line[1],true,Integer.parseInt(line[3]),parseDate(line[4])));
+                    } else {
+                        res.add(new Vehiculo(line[0],line[1],false,Integer.parseInt(line[3]),parseDate(line[4])));
+                    }
                 }
                 
             }

@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 // uso solo para pruebas
 import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.Semaphore;
 
 /**
@@ -28,7 +29,8 @@ public class Peaje{
 
     private Queue<IVehiculo> vehiculos;//archivo.lenght];
     private Casilla[] casillas;
-    private  PriorityQueue<IVehiculo>[] enEspera;
+    //private  PriorityQueue<IVehiculo>[] enEspera;
+    
     public Semaphore semaforo = new Semaphore(1);
     public Queue<Thread> hilos;
     
@@ -43,8 +45,8 @@ public class Peaje{
     public Peaje(){
         
         casillas = new Casilla[5];
-        casillas[0] = new Casilla(0, true,true);
-        casillas[1] = new Casilla(1, true,true);
+        casillas[0] = new Casilla(0, true,false);
+        casillas[1] = new Casilla(1, true,false);
         casillas[2] = new Casilla(2, true,false);
         casillas[3] = new Casilla(3, true,false);
         casillas[4] = new Casilla(4, true,false);
@@ -54,13 +56,8 @@ public class Peaje{
     
 
         
-        enEspera = new PriorityQueue[5];
-        
-        for (int i = 0; i < enEspera.length; i++) {
-            enEspera[i] = new PriorityQueue<>();
-        }
-        
        
+
         
         peaje = this;
         hilos = new LinkedList();
@@ -73,73 +70,59 @@ public class Peaje{
     
     public void iniciar() throws InterruptedException {
         
-        casillas[0].setHabilitada(true);
-        casillas[1].setHabilitada(true);
-        casillas[2].setHabilitada(true);
-        casillas[3].setHabilitada(true);
-        casillas[4].setHabilitada(true);
+        
         Thread aux;
-//            System.out.println("Hora reloj: "+ Reloj.getInstance().getHora());
-//            System.out.println("Hora proximo vehiculo: "+ HandleFile.getInstance().getFormatoFecha().format(vehiculos.peek().getTime()));
         IVehiculo veh;
         casillas[0].setHabilitada(true);
+        casillas[1].setHabilitada(true);
+        
         while (!vehiculos.isEmpty()) {
             
                  
                 if (vehiculos.peek() != null && Reloj.getInstance().getDate().compareTo(vehiculos.peek().getTime()) == 0){
-                      veh = vehiculos.poll();
-//                    System.out.println("Hora proximo reloj: "+ Reloj.getInstance().getHora());
-//                    System.out.println("Hora proximo vehiculo: "+ HandleFile.getInstance().getFormatoFecha().format(vehiculos.peek().getTime()));
-
-                    
-                        if (casillas[0].getEnEspera().size()  <= 3) {
-                           System.out.println("entra casilla 0 el vehiculo "+ veh.getMatricula());
-                            semaforo.acquire();
-                            casillas[0].addVehiculoEnEspera(veh);
-                            aux = new Thread(casillas[0]);
-                            hilos.add(aux);
-                            aux.start();
-                            semaforo.release();
+                        
+                        veh = vehiculos.poll();
+                        
+                        if (veh.getTelepeaje() || veh.getTipo().equals("emergencia")) {
+                            Casilla vacia = siguienteCasilla();
+                            if (vacia != null) {
+                                ingresarVehiculoAEspera(vacia, veh);
+                                continue;
+                            }
+                        }
+                        
+                        for (Casilla casilla : casillas) {
+                            if (casilla.isHabilitado() && casilla.getEnEspera().size()  < 3) {
+                                
+                                ingresarVehiculoAEspera(casilla, veh);
+                                continue;
+                            }
+                        }
+                        /*
+                        if (casillas[0].isHabilitado() && casillas[0].getEnEspera().size()  < 3) {
+                            
+                            ingresarVehiculoAEspera(casillas[0], veh);
                             continue;
                         }
-                    
-                        if (casillas[1].getEstado() && casillas[1].getCantEspera() < 3) {
-                           System.out.println("entra casilla 1 el vehiculo "+ veh.getMatricula());
-                            casillas[1].addVehiculoEnEspera(veh);
-                            aux = new Thread(casillas[1]);
-                            hilos.add(aux);
-                            aux.start();
+                        
+                        if (casillas[1].isHabilitado() && casillas[1].getEnEspera().size()  < 3) {
+                            ingresarVehiculoAEspera(casillas[1], veh);
                             continue;
                         }
-                    //}
-                        if (casillas[2].getEstado() && casillas[1].getCantEspera() < 3) {
-                           System.out.println("entra casilla 2 el vehiculo "+ veh.getMatricula());
-                            casillas[2].addVehiculoEnEspera(veh);
-                            aux = new Thread(casillas[2]);
-                            hilos.add(aux);
-                            aux.start();
+                        
+                        if (casillas[2].isHabilitado() && casillas[2].getEnEspera().size()  < 3) {
+                            ingresarVehiculoAEspera(casillas[2], veh);
                             continue;
                         }
-                    //}
-                        if (casillas[3].getEstado() && casillas[1].getCantEspera() < 3) {
-                           System.out.println("entra casilla 3 el vehiculo "+ veh.getMatricula());
-                            casillas[3].addVehiculoEnEspera(veh);
-                            aux = new Thread(casillas[3]);
-                            hilos.add(aux);
-                            aux.start();
+                        
+                        if (casillas[3].isHabilitado() && casillas[3].getEnEspera().size()  < 3) {
+                            ingresarVehiculoAEspera(casillas[3], veh);
                             continue;
                         }
-                    //}
-                        if (casillas[4].getEstado() && casillas[1].getCantEspera() < 3) {
-                           System.out.println("entra casilla 4 el vehiculo "+ veh.getMatricula());
-                            casillas[4].addVehiculoEnEspera(veh);
-                            aux = new Thread(casillas[4]);
-                            hilos.add(aux);
-                            aux.start();
+                        if (casillas[4].isHabilitado() && casillas[4].getEnEspera().size()  < 3) {
+                            ingresarVehiculoAEspera(casillas[4], veh);
                             continue;
-                        }
-                    //}
-                
+                        }*/
             }
         }
         for (Thread hilo : hilos) {
@@ -148,20 +131,29 @@ public class Peaje{
         HandleFile.getInstance().closeArchivoWriter();
     }
     
-    public Casilla siguienteHabilitada(){
+    
+    public void ingresarVehiculoAEspera(Casilla a, IVehiculo veh){
+        
+        System.out.println("entra casilla " +a.getNumeroCasilla()+ " el vehiculo "+ veh.getMatricula());
+        a.addVehiculoEnEspera(veh);
+        Thread nuevoHilo = new Thread(a);
+        hilos.add(nuevoHilo);
+        nuevoHilo.start();
+    }
+    
+    public Casilla siguienteCasilla(){
         
         Casilla ret = casillas[0];
         for (int i = 1; i < casillas.length; i++) {
             
-            System.out.println("ret "+ ret.getCantidadEnEspera()+" casilla["+i+"] tiene "+casillas[i].getCantidadEnEspera()+ " ");
+            if (!casillas[i].isHabilitado()) {
+                return casillas[i];
+            }
             if (casillas[i].getCantidadEnEspera() < ret.getCantidadEnEspera() ) {
                 ret = casillas[i];
             } 
             
         }
-        
-        System.out.println("Casilla elegida " + ret.getNumeroCasilla());
-       
         
         return ret;
     }

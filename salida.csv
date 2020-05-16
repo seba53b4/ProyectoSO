@@ -1,5 +1,30 @@
-
-[Thread-2] En casilla [0] paso un auto Matricula [123abd] la hora 21:41:24 03-05-2020 
-[Thread-1] En casilla [0] paso un auto Matricula [123abc] la hora 21:41:04 03-05-2020 
-[Thread-2] En casilla [0] paso un auto Matricula [123abd] la hora 21:41:24 03-05-2020 
-[Thread-3] En casilla [0] paso un auto Matricula [123aba] la hora 21:41:44 03-05-2020 
+Hilo;Casilla;Tipo;Matricula;Hora Entrada;Hora Salida 
+Thread-1;0;auto;AAA;09:40:04 PM 03-may-PM;09:41:04 PM 03-may-PM;60 
+Thread-5;1;auto;EEE;09:41:04 PM 03-may-PM;09:42:04 PM 03-may-PM;60 
+Thread-2;0;auto;BBB;09:41:04 PM 03-may-PM;09:42:24 PM 03-may-PM;80 
+Thread-7;2;auto;GGG;09:41:44 PM 03-may-PM;09:42:44 PM 03-may-PM;60 
+Thread-3;0;auto;CCC;09:42:24 PM 03-may-PM;09:43:44 PM 03-may-PM;80 
+Thread-8;1;auto;HHH;09:42:04 PM 03-may-PM;09:43:44 PM 03-may-PM;100 
+Thread-4;0;auto;DDD;09:43:44 PM 03-may-PM;09:44:45 PM 03-may-PM;61 
+Thread-6;0;auto;FFF;09:44:45 PM 03-may-PM;09:45:24 PM 03-may-PM;39 
+Hilo;Casilla;Tipo;Matricula;Hora Entrada;Hora Salida 
+Thread-1;0;auto;AAA;09:40:04 PM 03-may-PM;09:41:04 PM 03-may-PM;60 
+Thread-5;1;auto;EEE;09:41:04 PM 03-may-PM;09:42:04 PM 03-may-PM;60 
+Thread-2;0;auto;BBB;09:41:04 PM 03-may-PM;09:42:24 PM 03-may-PM;80 
+Thread-7;2;auto;GGG;09:41:44 PM 03-may-PM;09:42:44 PM 03-may-PM;60 
+Thread-8;1;auto;HHH;09:42:04 PM 03-may-PM;09:43:44 PM 03-may-PM;100 
+Thread-3;0;auto;CCC;09:42:24 PM 03-may-PM;09:43:44 PM 03-may-PM;80 
+Thread-4;0;auto;DDD;09:43:44 PM 03-may-PM;09:44:45 PM 03-may-PM;61 
+Thread-6;0;auto;FFF;09:44:45 PM 03-may-PM;09:45:24 PM 03-may-PM;39 
+Hilo;Casilla;Tipo;Matricula;Hora Entrada;Hora Salida 
+Thread-2;1;auto;AAA;09:40:04 PM 03-may-PM;09:41:04 PM 03-may-PM;60 
+Thread-1;0;auto;AAA;09:40:04 PM 03-may-PM;09:41:04 PM 03-may-PM;60 
+Thread-3;0;auto;BBB;09:41:04 PM 03-may-PM;09:42:24 PM 03-may-PM;80 
+Thread-4;1;auto;BBB;09:41:04 PM 03-may-PM;09:42:24 PM 03-may-PM;80 
+Thread-11;2;auto;GGG;09:41:44 PM 03-may-PM;09:42:44 PM 03-may-PM;60 
+Thread-6;1;auto;CCC;09:42:24 PM 03-may-PM;09:43:44 PM 03-may-PM;80 
+Thread-5;0;auto;CCC;09:42:24 PM 03-may-PM;09:43:44 PM 03-may-PM;80 
+Thread-7;0;auto;DDD;09:43:44 PM 03-may-PM;09:44:45 PM 03-may-PM;61 
+Thread-8;1;auto;DDD;09:43:44 PM 03-may-PM;09:44:45 PM 03-may-PM;61 
+Thread-9;0;auto;FFF;09:44:45 PM 03-may-PM;09:45:24 PM 03-may-PM;39 
+Thread-10;1;auto;FFF;09:44:45 PM 03-may-PM;09:45:24 PM 03-may-PM;39 

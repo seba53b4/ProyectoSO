@@ -5,6 +5,7 @@
  */
 package proyectoso;
 
+import Utils.HandleFile;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -23,7 +24,7 @@ public class Reloj extends Thread{
     //Calendar calentario;
     //Thread h1;
     
-    public int getRazonCambio(){
+    public synchronized int getRazonCambio(){
         return speed;
     }
     
@@ -34,6 +35,16 @@ public class Reloj extends Thread{
     public synchronized String getHora(){
         return formatoFecha.format(this.date);
     }
+    
+//    public synchronized void sumarDemora(IVehiculo veh){
+//        
+//        System.out.println(Thread.currentThread().getName() +" hora entrada " + HandleFile.getInstance().getFormatoFecha().format(aux.getTime()));
+//        
+//        Date horaSalida = (Date) veh.getTime().clone();
+//        horaSalida.setSeconds(wait);
+//        
+//        System.out.println(Thread.currentThread().getName() +" Hora salida " + HandleFile.getInstance().getFormatoFecha().format(horaSalida));
+//    }
     
     public Reloj(int speed){
         this.segundos = 0;
