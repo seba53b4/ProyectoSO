@@ -80,10 +80,10 @@ public class Casilla implements Runnable{
                     System.out.println("");
                     Long esperaVehiculo = new Long((Reloj.getInstance().getDate().getTime() - aux.getTime().getTime())/1000);
                     BancoDatos.getBancoDatos().registrar(aux, esperaVehiculo);
-                    
+                            
                     SimpleDateFormat formato =  new SimpleDateFormat("hh:mm:ss a dd-MMM-aa");
-                    HandleFile.getInstance().writeArchivo(Thread.currentThread().getName()+";"+ this.numeroCasilla +";" + aux.getTipo()+ ";"
-                            +aux.getMatricula()+";"+formato.format(aux.getTime())+";"+ formato.format(Reloj.getInstance().getDate())+";"+ esperaVehiculo);
+                    HandleFile.getInstance().writeArchivo(Thread.currentThread().getName()+";"+ this.numeroCasilla +";" + aux.getTipo()+ ";"+aux.getTelepeaje()+";"
+                            +aux.getMatricula()+";"+ aux.getEspera()+" seg;"+formato.format(aux.getTime())+";"+ formato.format(Reloj.getInstance().getDate())+";"+ esperaVehiculo);
                     
                 } catch (Exception ex) {
                     Logger.getLogger(Casilla.class.getName()).log(Level.SEVERE, null, ex);

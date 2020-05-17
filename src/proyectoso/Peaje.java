@@ -83,12 +83,9 @@ public class Peaje{
                         ingresarVehiculoAEspera(siguienteCasilla(), veh);
                         break;
                     }
-                    
                 }
-                
             }
         }
-        
         for (Thread hilo : hilos) {
             hilo.join();
         }

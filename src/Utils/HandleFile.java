@@ -88,7 +88,7 @@ public class HandleFile{
           
           try {
             
-            bufferWriter.write("Hilo;Casilla;Tipo;Matricula;Hora Entrada;Hora Salida;Tiempo Espera"+" \n");
+            bufferWriter.write("Hilo;Casilla;Tipo;Telepeaje;Matricula;Demora Vehiculo;Hora Entrada;Hora Salida;Tiempo Espera"+" \n");
         } catch(Exception e) {
             System.out.println("Excepcion leyendo fichero" + e);
         }
