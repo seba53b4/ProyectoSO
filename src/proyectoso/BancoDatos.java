@@ -19,11 +19,11 @@ public class BancoDatos {
     private int cantidadVehiculos;
     private Double costoOperativo;
     private Double sumaEsperas;
-
+    
     private Double recaudacion;
-    private final Double tarifaAuto;
-    private final Double tarifaOmnibus;
-    private final Double tarifaCamion;
+    private Double tarifaAuto;
+    private Double tarifaOmnibus;
+    private Double tarifaCamion;
     
     public static BancoDatos initBancoDatos(Double tarifaCar, Double tarifaTruck, Double tarifaBus){
         if (bancoDatos == null) {
@@ -43,6 +43,15 @@ public class BancoDatos {
         tarifaAuto = tarifaCar;
         tarifaCamion = tarifaTruck;
         tarifaOmnibus = tarifaBus;
+        sumaEsperas = 0.0;
+    }
+    public void clean(){
+        costoOperativo = 0.0;
+        recaudacion = 0.0;
+        cantidadVehiculos = 0;
+        tarifaAuto = 0.0;
+        tarifaCamion = 0.0;
+        tarifaOmnibus = 0.0;
         sumaEsperas = 0.0;
     }
     

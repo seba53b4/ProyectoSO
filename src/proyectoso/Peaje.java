@@ -5,21 +5,10 @@
  */
 package proyectoso;
 
-import Objects.Auto;
-import Objects.Camion;
 import Objects.IVehiculo;
-import Objects.Omnibus;
 import Utils.HandleFile;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-// uso solo para pruebas
-import java.util.Random;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.Semaphore;
 
 /**
  *
@@ -48,11 +37,6 @@ public class Peaje{
         vehiculos = HandleFile.getInstance().cargaArchivo();
         peaje = this;
         hilos = new LinkedList();
-        
-    }
-    
-    public synchronized IVehiculo getHead(){
-        return this.vehiculos.poll();
     }
     
     public void iniciar() throws InterruptedException {

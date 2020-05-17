@@ -39,23 +39,28 @@ public class HandleFile{
     private final SimpleDateFormat formatoFecha;
     private final String entrada;
     
-    public static HandleFile getInstance(){
-        if (hf == null) {
-            hf = new HandleFile("dummy");
-        }
-        return hf;
-    }
-    public static HandleFile getInstance(String entrada){
-        if (hf == null) {
-            hf = new HandleFile(entrada);
-        }
-        return hf;
-    }
     
     
     public SimpleDateFormat getFormatoFecha(){
         return this.formatoFecha;
     }
+    
+    
+    
+//    public HandleFile(){
+//        
+//         dir = "";
+//         fw = null;
+//         fr = null;
+//         bufferWriter = null;
+//         formatoFecha = null;
+//         entrada = null;
+//         
+//    }
+    public static HandleFile getInstance(){
+        
+        return HandleFile.hf;
+    } 
     
     public HandleFile(String entrada)
     {        
@@ -63,16 +68,12 @@ public class HandleFile{
           this.entrada = entrada;
           File f = new File(dir+"//salida.csv");
           f.delete();
-        try {
-            f.createNewFile();
-        } catch (IOException ex) {
-            Logger.getLogger(HandleFile.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            f.createNewFile();
-        } catch (IOException ex) {
-            System.out.println("Archivo de salida error");
-        }
+          try {
+              f.createNewFile();
+          } catch (IOException ex) {
+              Logger.getLogger(HandleFile.class.getName()).log(Level.SEVERE, null, ex);
+          }
+          
           try {
               fw = new FileWriter(f,true);
           } catch (IOException ex) {
@@ -85,13 +86,13 @@ public class HandleFile{
           }
           bufferWriter = new BufferedWriter(fw);
           formatoFecha = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
-          
           try {
-            
-            bufferWriter.write("Hilo;Casilla;Tipo;Telepeaje;Matricula;Demora Vehiculo;Hora Entrada;Hora Salida;Tiempo Espera"+" \n");
-        } catch(Exception e) {
-            System.out.println("Excepcion leyendo fichero" + e);
-        }
+              
+              bufferWriter.write("Hilo;Casilla;Tipo;Telepeaje;Matricula;Demora Vehiculo;Hora Entrada;Hora Salida;Tiempo Espera"+" \n");
+          } catch(Exception e) {
+              System.out.println("Excepcion leyendo fichero" + e);
+          }
+          hf = this;
     }
 
     public String getDir() {
@@ -166,6 +167,7 @@ public class HandleFile{
             bufferWriter.write(line+" \n");
             
             return true;
+            
         } catch(Exception e) {
             System.out.println("Excepcion leyendo fichero" + e);
             
