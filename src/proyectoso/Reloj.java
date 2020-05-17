@@ -36,16 +36,6 @@ public class Reloj extends Thread{
         return formatoFecha.format(this.date);
     }
     
-//    public synchronized void sumarDemora(IVehiculo veh){
-//        
-//        System.out.println(Thread.currentThread().getName() +" hora entrada " + HandleFile.getInstance().getFormatoFecha().format(aux.getTime()));
-//        
-//        Date horaSalida = (Date) veh.getTime().clone();
-//        horaSalida.setSeconds(wait);
-//        
-//        System.out.println(Thread.currentThread().getName() +" Hora salida " + HandleFile.getInstance().getFormatoFecha().format(horaSalida));
-//    }
-    
     public Reloj(int speed){
         this.segundos = 0;
         this.horas = 0;
@@ -90,10 +80,7 @@ public class Reloj extends Thread{
     
     @Override
     public void run(){
-        //Thread ct = Thread.currentThread();
-        //while(ct == h1){}
-        
-        
+       
         while(true){
             try{
                 Thread.sleep(this.speed);
@@ -113,12 +100,6 @@ public class Reloj extends Thread{
                 Restaurar();
             }
             
-            /*if(this.horas<12){
-                this.ampm = "am";
-            }
-            else{
-                this.ampm = "pm";
-            }*/
             
             String fechaAux = ""+this.horas+":"+this.minutos+":"+this.segundos+" "+this.dia+"-"+this.mes+"-"+this.año;
             this.date = ParseFecha(fechaAux);

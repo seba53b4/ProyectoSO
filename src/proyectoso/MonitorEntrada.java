@@ -27,9 +27,6 @@ public class MonitorEntrada {
         return this.habilitado;
     }
     
-   // public habilitado
-    
-    
     public synchronized void evaluarEstado(){
         
         if (!habilitado) {
@@ -39,8 +36,6 @@ public class MonitorEntrada {
                 Logger.getLogger(MonitorEntrada.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
-        
         
     }
     

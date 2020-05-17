@@ -37,30 +37,49 @@ public class HandleFile{
     private FileReader fr;
     private final BufferedWriter bufferWriter;
     private final SimpleDateFormat formatoFecha;
-    
+    private final String entrada;
     
     public static HandleFile getInstance(){
         if (hf == null) {
-            hf = new HandleFile();
+            hf = new HandleFile("dummy");
         }
         return hf;
     }
+    public static HandleFile getInstance(String entrada){
+        if (hf == null) {
+            hf = new HandleFile(entrada);
+        }
+        return hf;
+    }
+    
     
     public SimpleDateFormat getFormatoFecha(){
         return this.formatoFecha;
     }
     
-    public HandleFile()
+    public HandleFile(String entrada)
     {        
-          dir = System.getProperty("user.dir");// + "\\":
+          dir = System.getProperty("user.dir");
+          this.entrada = entrada;
           File f = new File(dir+"//salida.csv");
+          f.delete();
+        try {
+            f.createNewFile();
+        } catch (IOException ex) {
+            Logger.getLogger(HandleFile.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            f.createNewFile();
+        } catch (IOException ex) {
+            System.out.println("Archivo de salida error");
+        }
           try {
               fw = new FileWriter(f,true);
           } catch (IOException ex) {
               Logger.getLogger(HandleFile.class.getName()).log(Level.SEVERE, null, ex);
           }
           try {
-              fr = new FileReader(dir+"//entrada.txt");
+              fr = new FileReader(dir+"//"+entrada);
           } catch (IOException ex) {
               Logger.getLogger(HandleFile.class.getName()).log(Level.SEVERE, null, ex);
           }
@@ -69,15 +88,14 @@ public class HandleFile{
           
           try {
             
-            bufferWriter.write("Hilo;Casilla;Tipo;Matricula;Hora Entrada;Hora Salida"+" \n");
-            
-            
+            bufferWriter.write("Hilo;Casilla;Tipo;Matricula;Hora Entrada;Hora Salida;Tiempo Espera"+" \n");
         } catch(Exception e) {
             System.out.println("Excepcion leyendo fichero" + e);
-            
         }
-          
-          
+    }
+
+    public String getDir() {
+        return dir;
     }
 
     
@@ -119,7 +137,6 @@ public class HandleFile{
             while((linea = br.readLine()) != null)
             {
                 if (!linea.contains("#")) {
-                    
                     
                     line = linea.split(";");
                     if (line[2].equals("1")) {

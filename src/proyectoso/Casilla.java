@@ -26,21 +26,8 @@ public class Casilla implements Runnable{
     private int numeroCasilla;
     private ConcurrentLinkedDeque<IVehiculo> enEspera; //
     private boolean habilitada;
-
-    
-    public int cantEspera;
-    private boolean telepeaje;
     private Semaphore accesoCasilla;
-    private IVehiculo aProcesar;
-    
-    public synchronized void set_aProcesar(IVehiculo v){
-        this.aProcesar = v;
-    }
-    
-    public int getCantEspera() {
-        return cantEspera;
-    }
-  
+
     public void setHabilitada(boolean habilitada) {
         this.habilitada = habilitada;
     }
@@ -57,18 +44,13 @@ public class Casilla implements Runnable{
         enEspera = new ConcurrentLinkedDeque<IVehiculo>() ;
         habilitada = av;
         numeroCasilla = numCasilla;
-        telepeaje = tel;
         accesoCasilla = new Semaphore(1);
-        cantEspera = 0;
     }
-    
-    
-    
     
     @Override
     public void run() {
+        
         try {
-
             accesoCasilla.acquire();
             IVehiculo aux ;
             synchronized(enEspera){
@@ -96,27 +78,27 @@ public class Casilla implements Runnable{
                     }
                     
                     System.out.println("");
-                    BancoDatos.getBancoDatos().incCantidadVehiculos();
-                    BancoDatos.getBancoDatos().aumentarRecaudacion(aux.getTipo());
-                    BancoDatos.getBancoDatos().aumentarCostoOperativo(45.0);
+                    Long esperaVehiculo = new Long((Reloj.getInstance().getDate().getTime() - aux.getTime().getTime())/1000);
+                    BancoDatos.getBancoDatos().registrar(aux, esperaVehiculo);
+                    
                     SimpleDateFormat formato =  new SimpleDateFormat("hh:mm:ss a dd-MMM-aa");
                     HandleFile.getInstance().writeArchivo(Thread.currentThread().getName()+";"+ this.numeroCasilla +";" + aux.getTipo()+ ";"
-                            +aux.getMatricula()+";"+formato.format(entradaReal)+";"+ formato.format(Reloj.getInstance().getDate())+";"+ ((Reloj.getInstance().getDate().getTime() - entradaReal.getTime())/1000) );
+                            +aux.getMatricula()+";"+formato.format(aux.getTime())+";"+ formato.format(Reloj.getInstance().getDate())+";"+ esperaVehiculo);
+                    
                 } catch (Exception ex) {
                     Logger.getLogger(Casilla.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             
-            // Se dehabilita si no tiene mas vehiculos en espera y no son las primeras casilla 0 y casilla 1. 
+            // Se dehabilita si no tiene mas vehiculos en espera, solo si la casilla no son las primeras casilla 0 y casilla 1. 
             if (this.numeroCasilla > 1  && enEspera.isEmpty()) {
                 this.setHabilitada(false);
             }
             accesoCasilla.release();
             
-        } catch (Exception ex) {
+        } catch (InterruptedException ex) {
             Logger.getLogger(Casilla.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }
 
     public int getNumeroCasilla() {

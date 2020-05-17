@@ -5,6 +5,8 @@
  */
 package proyectoso;
 
+import Objects.IVehiculo;
+
 /**
  *
  * @author Seba-OS
@@ -16,6 +18,7 @@ public class BancoDatos {
     
     private int cantidadVehiculos;
     private Double costoOperativo;
+    private Double sumaEsperas;
 
     private Double recaudacion;
     private final Double tarifaAuto;
@@ -40,6 +43,7 @@ public class BancoDatos {
         tarifaAuto = tarifaCar;
         tarifaCamion = tarifaTruck;
         tarifaOmnibus = tarifaBus;
+        sumaEsperas = 0.0;
     }
     
     public int getCantidadVehiculos() {
@@ -58,7 +62,6 @@ public class BancoDatos {
         this.recaudacion += getTarifa(tipo);
     }
     
-    
     public Double getTarifa(String tipo){
         
         switch (tipo.toLowerCase()) {
@@ -75,16 +78,30 @@ public class BancoDatos {
         }
     }
     
+    public synchronized void registrar(IVehiculo veh, Long espera){
+       
+        incCantidadVehiculos();
+        aumentarRecaudacion(veh.getTipo());
+        aumentarCostoOperativo(45.0);
+        aumentarSumaEsperas(espera.doubleValue());
+    }
+    
     public synchronized void incCantidadVehiculos() {
         this.cantidadVehiculos = cantidadVehiculos + 1;
     }
     
-    
-    public synchronized void aumentarCostoOperativo(Double costo) {
+    public void aumentarCostoOperativo(Double costo) {
         this.costoOperativo = costoOperativo + costo;
     }
     
+    public synchronized void aumentarSumaEsperas(Double espera) {
+        this.sumaEsperas += espera;
+    }
     
+    
+    public Double getPromedioEspera(){
+        return sumaEsperas/this.cantidadVehiculos;
+    }
     
     
     

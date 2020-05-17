@@ -29,12 +29,7 @@ public class Peaje{
 
     private Queue<IVehiculo> vehiculos;//archivo.lenght];
     private Casilla[] casillas;
-    //private  PriorityQueue<IVehiculo>[] enEspera;
-    
-    public Semaphore semaforo = new Semaphore(1);
     public Queue<Thread> hilos;
-    
-    
     public static Peaje peaje;
    
     public static Peaje getInstance(){
@@ -50,15 +45,7 @@ public class Peaje{
         casillas[2] = new Casilla(2, true,false);
         casillas[3] = new Casilla(3, true,false);
         casillas[4] = new Casilla(4, true,false);
-
         vehiculos = HandleFile.getInstance().cargaArchivo();
-        
-    
-
-        
-       
-
-        
         peaje = this;
         hilos = new LinkedList();
         
@@ -70,61 +57,38 @@ public class Peaje{
     
     public void iniciar() throws InterruptedException {
         
-        
         Thread aux;
         IVehiculo veh;
         casillas[0].setHabilitada(true);
         casillas[1].setHabilitada(true);
-        
         while (!vehiculos.isEmpty()) {
             
-                 
-                if (vehiculos.peek() != null && Reloj.getInstance().getDate().compareTo(vehiculos.peek().getTime()) == 0){
-                        
-                        veh = vehiculos.poll();
-                        
-                        if (veh.getTelepeaje() || veh.getTipo().equals("emergencia")) {
-                            Casilla vacia = siguienteCasilla();
-                            if (vacia != null) {
-                                ingresarVehiculoAEspera(vacia, veh);
-                                continue;
-                            }
-                        }
-                        
-                        for (Casilla casilla : casillas) {
-                            if (casilla.isHabilitado() && casilla.getEnEspera().size()  < 3) {
-                                
-                                ingresarVehiculoAEspera(casilla, veh);
-                                continue;
-                            }
-                        }
-                        /*
-                        if (casillas[0].isHabilitado() && casillas[0].getEnEspera().size()  < 3) {
-                            
-                            ingresarVehiculoAEspera(casillas[0], veh);
-                            continue;
-                        }
-                        
-                        if (casillas[1].isHabilitado() && casillas[1].getEnEspera().size()  < 3) {
-                            ingresarVehiculoAEspera(casillas[1], veh);
-                            continue;
-                        }
-                        
-                        if (casillas[2].isHabilitado() && casillas[2].getEnEspera().size()  < 3) {
-                            ingresarVehiculoAEspera(casillas[2], veh);
-                            continue;
-                        }
-                        
-                        if (casillas[3].isHabilitado() && casillas[3].getEnEspera().size()  < 3) {
-                            ingresarVehiculoAEspera(casillas[3], veh);
-                            continue;
-                        }
-                        if (casillas[4].isHabilitado() && casillas[4].getEnEspera().size()  < 3) {
-                            ingresarVehiculoAEspera(casillas[4], veh);
-                            continue;
-                        }*/
+            if (vehiculos.peek() != null && Reloj.getInstance().getDate().compareTo(vehiculos.peek().getTime()) == 0){
+                veh = vehiculos.poll();
+                // Evaluacion de vehiculos Telepeaje y Emergencia
+                if (veh.getTelepeaje() || veh.getTipo().equals("emergencia")) {
+                    Casilla vacia = siguienteCasillaEspecial();
+                    if (vacia != null) {
+                        ingresarVehiculoAEspera(vacia, veh);
+                        continue;
+                    }
+                }
+                for (int i = 0; i < casillas.length; i++) {
+                    
+                    if (casillas[i].isHabilitado() && casillas[i].getEnEspera().size()  < 3) {
+                        ingresarVehiculoAEspera(casillas[i], veh);
+                        break;
+                    }
+                    if (i == 4) {
+                        ingresarVehiculoAEspera(siguienteCasilla(), veh);
+                        break;
+                    }
+                    
+                }
+                
             }
         }
+        
         for (Thread hilo : hilos) {
             hilo.join();
         }
@@ -141,7 +105,7 @@ public class Peaje{
         nuevoHilo.start();
     }
     
-    public Casilla siguienteCasilla(){
+    public Casilla siguienteCasillaEspecial(){
         
         Casilla ret = casillas[0];
         for (int i = 1; i < casillas.length; i++) {
@@ -152,9 +116,21 @@ public class Peaje{
             if (casillas[i].getCantidadEnEspera() < ret.getCantidadEnEspera() ) {
                 ret = casillas[i];
             } 
-            
         }
+        return ret;
+    }
+    public Casilla siguienteCasilla(){
         
+        Casilla ret = casillas[0];
+        for (int i = 1; i < casillas.length; i++) {
+            
+            if (casillas[i].getCantidadEnEspera() < ret.getCantidadEnEspera() ) {
+                ret = casillas[i];
+                if (!casillas[i].isHabilitado()) {
+                    casillas[i].setHabilitada(true);
+                }
+            } 
+        }
         return ret;
     }
   
