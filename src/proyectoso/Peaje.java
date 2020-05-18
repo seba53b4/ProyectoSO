@@ -54,13 +54,6 @@ public class Peaje{
  * @throws InterruptedException 
  */    
 public void iniciar() throws InterruptedException {
-
-    Thread aux;
-    IVehiculo veh;
-    casillas[0].setHabilitada(true);
-    casillas[1].setHabilitada(true);
-    Evento event;
-    while (!vehiculos.isEmpty()) {
         
         Thread aux;
         IVehiculo veh;
