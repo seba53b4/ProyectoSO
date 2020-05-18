@@ -75,20 +75,23 @@ public class HandleFile{
             testFolder.mkdir();
             
         }
-        for (int i = 0; i < tests.length; i++) {
-            try {
-                //System.out.println("Exportar test " +tests[i].getName() );
-                Files.copy(Paths.get(tests[i].getAbsolutePath()), Paths.get(testFolder.getAbsolutePath()+"/"+tests[i].getName()), StandardCopyOption.REPLACE_EXISTING);
-                //System.out.println("Path origen "+ Paths.get(tests[i].getAbsolutePath()));
-                //System.out.println("Path destino "+ Paths.get(testFolder.getAbsolutePath()));
-            } catch (FileNotFoundException ex) {
-                System.out.println("Error no se encuentra archivo de tests "+ tests[i].getName());
-            } catch (IOException ex) {
-                System.out.println("Error al copiar archivo de tests "+ tests[i].getName());
-            }catch (Exception ex) {
-                System.out.println("Error exception "+ ex+" en "+ tests[i].getName());
+        /*if (tests.length != 0) {
+            
+            for (int i = 0; i < tests.length; i++) {
+                try {
+                    //System.out.println("Exportar test " +tests[i].getName() );
+                    Files.copy(Paths.get(tests[i].getAbsolutePath()), Paths.get(testFolder.getAbsolutePath()+"/"+tests[i].getName()), StandardCopyOption.REPLACE_EXISTING);
+                    //System.out.println("Path origen "+ Paths.get(tests[i].getAbsolutePath()));
+                    //System.out.println("Path destino "+ Paths.get(testFolder.getAbsolutePath()));
+                } catch (FileNotFoundException ex) {
+                    System.out.println("Error no se encuentra archivo de tests "+ tests[i].getName());
+                } catch (IOException ex) {
+                    System.out.println("Error al copiar archivo de tests "+ tests[i].getName());
+                }catch (Exception ex) {
+                    System.out.println("Error exception "+ ex+" en "+ tests[i].getName());
+                }
             }
-        }
+        }*/
         
     }
     

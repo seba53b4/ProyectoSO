@@ -33,7 +33,9 @@ public class ProyectoSO {
         Double tarifaCamion = 195.0;
         Double tarifaBus = 195.0;
         int segundos = 0 , horas = 21, minutos = 40, dia = 3 , mes = 5,año = 2020;
-        int speed = 1;
+        int speed = 5;
+        hf = new HandleFile();
+        hf.exportarTests();
         String[] entradas;
         Scanner scanner = new Scanner(stream);
         String path = "";
@@ -154,11 +156,9 @@ public class ProyectoSO {
                         break;
                 case "ex":
                     if (input.contains("ex")) {
-                        hf = new HandleFile();
-                        hf.exportarTests();
+                        
                         boolean todoOk = true;
                         File[] tests = hf.getArchivosCarpeta("testCasesEntrada");
-                        
                         input = scanner.next();
                         
                         if (input.equals("t")) {
@@ -166,23 +166,30 @@ public class ProyectoSO {
                             for (int i = 0; i < tests.length; i++) {
                                 System.out.println(i+". "+tests[i].getName());
                             }
-                            String msg = "\n Seleccione por el número el archivo elegido entre ";
+                            
+                            String msg = "\nSeleccione por el número el archivo elegido entre ";
                             if (tests.length == 0) {
-                                System.out.println("\n No hay test en carpeta\n");
+                                System.out.println("Obs: No hay tests en carpeta\n");
+                                break;
                             } else {
-                                msg += "[0 .. "+ tests.length+"] \n";
+                                msg += "[0 .. "+(tests.length-1)+"] \n";
                             }
                             
+                            System.out.println(msg);
                             input = scanner.next();
                             if (HandleFile.isNumeric(input)) {
+                               
                                 if (Integer.parseInt(input) < tests.length) {
-                                    System.out.println("CARGA ARCHIVOOO:  "+tests[Integer.parseInt(input)].getName());
+                                    //System.out.println("CARGA ARCHIVOOO:  "+tests[Integer.parseInt(input)].getName());
                                     hf = new HandleFile(tests[Integer.parseInt(input)].getName());
-                                    System.out.println("\n Seleccionado correctamente el Test Case "+ tests[Integer.parseInt(input)].getName());
+                                    System.out.println("\nSeleccionado correctamente el Test Case \n"+ tests[Integer.parseInt(input)].getName());
                                 } else {
                                     System.out.println("\n ** ERROR: Número ingresado fuera de rango ** \n");
                                     todoOk = false;
                                 }
+                            }else {
+                                System.out.println("\n ** ERROR: Valor ingresado no numérico ** \n");
+                                todoOk = false;
                             }
                         } else {
                                 //System.out.println("entra ");
@@ -198,7 +205,7 @@ public class ProyectoSO {
                         }
                         if (todoOk) {
                             
-                            System.out.println("**************************");
+                            System.out.println("\n**************************");
                             System.out.println("\n Ejecutando Simulación \n");
                             System.out.println("**************************\n");
                             Peaje peaje = new Peaje();
@@ -211,9 +218,13 @@ public class ProyectoSO {
                             System.out.println("Recaudación: " + BancoDatos.getBancoDatos().getRecaudacion());
                             System.out.println("Promedio de espera: " + BancoDatos.getBancoDatos().getPromedioEspera());
                             if (HandleFile.isNumeric(input)) {
-                                System.out.println("\nEjecución de archivo "+ tests[Integer.parseInt(input)].getName()+ " finalizada.\n");
+                                System.out.println("\n**************************");
+                                System.out.println("\n Ejecución de archivo "+ tests[Integer.parseInt(input)].getName()+ " finalizada.\n");
+                                System.out.println("**************************\n");
                             } else {
-                                System.out.println("\nEjecución de archivo "+ input + " finalizada.\n");
+                                System.out.println("\n**************************");
+                                System.out.println("\nE jecución de archivo "+ input + " finalizada.\n");
+                                System.out.println("**************************\n");
                             }
                             BancoDatos.getBancoDatos().clean();
                             reloj.stop();
