@@ -13,17 +13,18 @@ import Objects.IVehiculo;
  */
 public class BancoDatos {
     
-    
     private static BancoDatos bancoDatos;
-    
     private int cantidadVehiculos;
     private Double costoOperativo;
     private Double sumaEsperas;
-    
     private Double recaudacion;
     private Double tarifaAuto;
     private Double tarifaOmnibus;
     private Double tarifaCamion;
+    
+    private Double tarifaAutoNormal;
+    private Double tarifaCamionNormal;
+    private Double tarifaOmnibusNormal;
     
     public static BancoDatos initBancoDatos(Double tarifaCar, Double tarifaTruck, Double tarifaBus){
         if (bancoDatos == null) {
@@ -36,6 +37,24 @@ public class BancoDatos {
         return bancoDatos;
     }
     
+    
+    
+    public void setAumentarTarifasHoraPico(){
+        
+        tarifaAuto += (tarifaAuto * 0.2);
+        tarifaCamion += (tarifaCamion * 0.2);
+        tarifaOmnibus += (tarifaOmnibus * 0.2);
+        
+    }   
+    
+    public void setTarifaNormal(){
+        
+        tarifaAuto = tarifaAutoNormal;
+        tarifaCamion = tarifaCamionNormal;
+        tarifaOmnibus = tarifaOmnibusNormal;
+        
+    }
+    
     public BancoDatos(Double tarifaCar, Double tarifaTruck, Double tarifaBus){
         costoOperativo = 0.0;
         recaudacion = 0.0;
@@ -44,14 +63,18 @@ public class BancoDatos {
         tarifaCamion = tarifaTruck;
         tarifaOmnibus = tarifaBus;
         sumaEsperas = 0.0;
+        tarifaAutoNormal = tarifaAuto;
+        tarifaCamionNormal = tarifaCamion;
+        tarifaOmnibusNormal = tarifaOmnibus;
+        
     }
     public void clean(){
         costoOperativo = 0.0;
         recaudacion = 0.0;
         cantidadVehiculos = 0;
-        tarifaAuto = this.getTarifa("auto");
-        tarifaCamion = this.getTarifa("camion");
-        tarifaOmnibus = this.getTarifa("omnibus");
+        tarifaAuto = tarifaAutoNormal;
+        tarifaCamion = tarifaCamionNormal;
+        tarifaOmnibus = tarifaOmnibusNormal;
         sumaEsperas = 0.0;
     }
     

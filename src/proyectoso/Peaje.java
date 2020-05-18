@@ -46,16 +46,21 @@ public class Peaje{
         
     }
     
-    public void iniciar() throws InterruptedException {
-        
-        Thread aux;
-        IVehiculo veh;
-        casillas[0].setHabilitada(true);
-        casillas[1].setHabilitada(true);
-        Evento event;
-        while (!vehiculos.isEmpty()) {
+public void iniciar() throws InterruptedException {
 
-                if (!eventos.isEmpty()){
+    Thread aux;
+    IVehiculo veh;
+    casillas[0].setHabilitada(true);
+    casillas[1].setHabilitada(true);
+    Evento event;
+    while (!vehiculos.isEmpty()) {
+        
+//
+//            if (Reloj.getInstance().getDate().after(date)) {
+//            
+//            }
+
+            if (!eventos.isEmpty()){
                     for (Evento evento : eventos) {
                         if (!eventos.isEmpty() && Reloj.getInstance().getDate().compareTo(eventos.peek().getFechaEvento()) == 0) {
                             SimpleDateFormat formato =  new SimpleDateFormat("hh:mm:ss a dd-MMM-aa");
@@ -85,10 +90,11 @@ public class Peaje{
                         continue;
                     }
                 }
+            }
+
+            for (int i = 0; i < casillas.length; i++) {
                 
-                for (int i = 0; i < casillas.length; i++) {
-                    
-                    
+                
                     
                     if (!casillas[i].isBloqueada()) {
                         
@@ -102,7 +108,7 @@ public class Peaje{
                             break;
                         }
                     }
-                }
+                
             }
             
             if (!eventosPasados.isEmpty()) {
@@ -114,12 +120,13 @@ public class Peaje{
                         }
                     }
                 }
-        }
-        for (Thread hilo : hilos) {
-            hilo.join();
-        }
-        HandleFile.getInstance().closeArchivoWriter();
+            
     }
+    for (Thread hilo : hilos) {
+        hilo.join();
+    }
+    HandleFile.getInstance().closeArchivoWriter();
+}
     
     
     public void ingresarVehiculoAEspera(Casilla a, IVehiculo veh){
@@ -133,21 +140,28 @@ public class Peaje{
     
     public Casilla siguienteCasillaEspecial(){
         
+        // Si alguna de las primeras 2 estan vacias 
+        for (int i = 0; i < 2; i++) {
+            if (casillas[i].getCantidadEnEspera() == 0) {
+                return casillas[i];
+            }
+        }
+        
         Casilla ret = casillas[0];
         for (int i = 1; i < casillas.length; i++) {
             
-            if (!casillas[i].isHabilitado() && !casillas[i].isBloqueada()) {
-                return casillas[i];
-            }
             if (casillas[i].getCantidadEnEspera() < ret.getCantidadEnEspera() && !casillas[i].isBloqueada() ) {
                 ret = casillas[i];
             } 
+            if (!casillas[i].isHabilitado() && !casillas[i].isBloqueada()) {
+                return casillas[i];
+            }
         }
         return ret;
     }
     public Casilla siguienteCasilla(){
         
-        //seleccion de pivote
+        // Selección de pivote
         Casilla ret = null;
         for (int i = 0; i < casillas.length; i++) {
             if (!casillas[i].isBloqueada()) {
@@ -155,6 +169,7 @@ public class Peaje{
                 break;
             }
         }
+        // Selección de la casilla
         for (int i = 1; i < casillas.length; i++) {
             System.out.println("Pregunto la casilla " + casillas[i].getNumeroCasilla() + " está bloqueada? "+ casillas[i].isBloqueada());
             if (casillas[i].isBloqueada()) {

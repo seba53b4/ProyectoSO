@@ -63,16 +63,16 @@ public class Casilla implements Runnable{
         try {
             accesoCasilla.acquire();
             IVehiculo aux ;
-            synchronized(enEspera){
-                aux =  enEspera.remove();
-            }
+            
+            aux =  enEspera.remove();
+            
             Date horaSalida;
             Date entradaReal = (Date) Reloj.getInstance().getDate().clone(); 
-           // System.out.println(Thread.currentThread().getName() +" hora real de entrada " + HandleFile.getInstance().getFormatoFecha().format(entradaReal) +" de vehiculo "+ aux.getMatricula());
+            System.out.println(Thread.currentThread().getName() +" hora real de entrada " + HandleFile.getInstance().getFormatoFecha().format(entradaReal) +" de vehiculo "+ aux.getMatricula());
             int wait = aux.getTime().getSeconds()+aux.getEspera();
             horaSalida = (Date) Reloj.getInstance().getDate().clone();
             horaSalida.setSeconds(wait);
-          //  System.out.println(Thread.currentThread().getName() +" Hora salida estimada " + HandleFile.getInstance().getFormatoFecha().format(horaSalida)+" de vehiculo "+ aux.getMatricula());
+            System.out.println(Thread.currentThread().getName() +" Hora salida estimada " + HandleFile.getInstance().getFormatoFecha().format(horaSalida)+" de vehiculo "+ aux.getMatricula());
             
             //Thread.sleep(10 * aux.getEspera());
             
