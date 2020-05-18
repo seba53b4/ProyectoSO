@@ -46,36 +46,40 @@ public class Peaje{
         
     }
     
-public void iniciar() throws InterruptedException {
-
-    Thread aux;
-    IVehiculo veh;
-    casillas[0].setHabilitada(true);
-    casillas[1].setHabilitada(true);
-    Evento event;
-    while (!vehiculos.isEmpty()) {
+    public void iniciar() throws InterruptedException {
         
-//
-//            if (Reloj.getInstance().getDate().after(date)) {
-//            
-//            }
+        Thread aux;
+        IVehiculo veh;
+        casillas[0].setHabilitada(true);
+        casillas[1].setHabilitada(true);
+        Evento event;
+        while (!vehiculos.isEmpty()) {
+            
+            //            if ((Reloj.getInstance().getDate().getHours() == 12 || Reloj.getInstance().getDate().getHours() == 18) && Reloj.getInstance().getDate().getSeconds() >= 0) {
+            //                BancoDatos.getBancoDatos().setAumentarTarifasHoraPico();
+            //            }
+            //
+            //            if ((Reloj.getInstance().getDate().getHours() == 13 || Reloj.getInstance().getDate().getHours() == 19) && Reloj.getInstance().getDate().getSeconds() > 0) {
+            //                BancoDatos.getBancoDatos().setTarifaNormal();
+            //            }
 
             if (!eventos.isEmpty()){
-                    for (Evento evento : eventos) {
-                        if (!eventos.isEmpty() && Reloj.getInstance().getDate().compareTo(eventos.peek().getFechaEvento()) == 0) {
-                            SimpleDateFormat formato =  new SimpleDateFormat("hh:mm:ss a dd-MMM-aa");
-                            event = eventos.poll();
-                            casillas[event.getNumeroCasilla()].setBloqueada(true);
-                            System.out.println("*********************");
-                            System.out.println("Ocurre un evento en la casilla " + event.getNumeroCasilla());
-                            System.out.println("Se bloquea desde " + formato.format(event.getFechaEvento()) + " hasta " + formato.format(event.getFechaFinal()));
-                            //System.out.println("Fecha evento iniciado "+ event.getFechaEvento()+ " estado casilla "+event.getNumeroCasilla()+" "+casillas[event.getNumeroCasilla()].isBloqueada());
-                            eventosPasados.add(event);
-                            System.out.println("*********************");
-                        }
+                for (Evento evento : eventos) {
+                    if (!eventos.isEmpty() && Reloj.getInstance().getDate().compareTo(eventos.peek().getFechaEvento()) == 0) {
+                        SimpleDateFormat formato =  new SimpleDateFormat("hh:mm:ss a dd-MMM-aa");
+                        event = eventos.poll();
+                        casillas[event.getNumeroCasilla()].setBloqueada(true);
+                        casillas[(event.getNumeroCasilla()+2)%4].setHabilitada(true);
+                        System.out.println("*********************");
+                        System.out.println("Ocurre un evento en la casilla " + event.getNumeroCasilla());
+                        System.out.println("Se bloquea desde " + formato.format(event.getFechaEvento()) + " hasta " + formato.format(event.getFechaFinal()));
+                        //System.out.println("Fecha evento iniciado "+ event.getFechaEvento()+ " estado casilla "+event.getNumeroCasilla()+" "+casillas[event.getNumeroCasilla()].isBloqueada());
+                        eventosPasados.add(event);
+                        System.out.println("*********************");
                     }
                 }
-            
+            }
+
             if (vehiculos.peek() != null && Reloj.getInstance().getDate().compareTo(vehiculos.peek().getTime()) == 0){
                 veh = vehiculos.poll();
                 // Evaluacion de vehiculos Telepeaje y Emergencia
@@ -90,28 +94,16 @@ public void iniciar() throws InterruptedException {
                         continue;
                     }
                 }
-            
 
-            for (int i = 0; i < casillas.length; i++) {
-                
-                
-                    
-                    if (!casillas[i].isBloqueada()) {
-                        
-                        if (casillas[i].isHabilitado() && casillas[i].getEnEspera().size()  < 3) {
-                            ingresarVehiculoAEspera(casillas[i], veh);
-                            break;
-                        }
-                        if ( i == 4) {
 
-                            ingresarVehiculoAEspera(siguienteCasilla(), veh);
-                            break;
-                        }
-                    }
-                
-            }
-            
-            if (!eventosPasados.isEmpty()) {
+                Casilla cs = siguienteCasillaHabilitadas();
+                if (cs  != null) {
+                    ingresarVehiculoAEspera(cs, veh);
+                } else {
+                    ingresarVehiculoAEspera(siguienteCasilla(), veh);
+                }
+
+                if (!eventosPasados.isEmpty()) {
                     for (Evento eventPasado : eventosPasados) {
                         if (Reloj.getInstance().getDate().compareTo(eventPasado.getFechaFinal()) == 0) {
                             System.out.println("Finaliza el evento "+ eventPasado.toString());
@@ -121,12 +113,12 @@ public void iniciar() throws InterruptedException {
                     }
                 }
             }
+        }
+        for (Thread hilo : hilos) {
+            hilo.join();
+        }
+        HandleFile.getInstance().closeArchivoWriter();
     }
-    for (Thread hilo : hilos) {
-        hilo.join();
-    }
-    HandleFile.getInstance().closeArchivoWriter();
-}
     
     
     public void ingresarVehiculoAEspera(Casilla a, IVehiculo veh){
@@ -142,7 +134,7 @@ public void iniciar() throws InterruptedException {
         
         // Si alguna de las primeras 2 estan vacias 
         for (int i = 0; i < 2; i++) {
-            if (casillas[i].getCantidadEnEspera() == 0) {
+            if (casillas[i].getCantidadEnEspera() == 0 && !casillas[i].isBloqueada()) {
                 return casillas[i];
             }
         }
@@ -159,6 +151,32 @@ public void iniciar() throws InterruptedException {
         }
         return ret;
     }
+    
+    
+    public Casilla siguienteCasillaHabilitadas(){
+        
+        // Selección de pivote
+        Casilla ret = null;
+        for (int i = 0; i < casillas.length; i++) {
+            if (!casillas[i].isBloqueada()) {
+                ret = casillas[i];
+                break;
+            }
+        }
+        // Selección de la casilla
+        for (int i = 1; i < casillas.length; i++) {
+            System.out.println("Pregunto la casilla " + casillas[i].getNumeroCasilla() + " está bloqueada? "+ casillas[i].isBloqueada());
+            if (casillas[i].isBloqueada()) {
+                continue;
+            }
+            if ( casillas[i].isHabilitado() && casillas[i].getCantidadEnEspera() < ret.getCantidadEnEspera() && casillas[i].getEnEspera().size()  < 3) {
+                ret = casillas[i];
+                
+            } 
+        }
+        return ret;
+    }
+  
     public Casilla siguienteCasilla(){
         
         // Selección de pivote

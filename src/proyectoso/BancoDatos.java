@@ -39,15 +39,15 @@ public class BancoDatos {
     
     
     
-    public void setAumentarTarifasHoraPico(){
+    public synchronized void setAumentarTarifasHoraPico(){
         
-        tarifaAuto += (tarifaAuto * 0.2);
-        tarifaCamion += (tarifaCamion * 0.2);
-        tarifaOmnibus += (tarifaOmnibus * 0.2);
+        tarifaAuto += (tarifaAuto * 0.1);
+        tarifaCamion += (tarifaCamion * 0.1);
+        tarifaOmnibus += (tarifaOmnibus * 0.1);
         
     }   
     
-    public void setTarifaNormal(){
+    public synchronized void setTarifaNormal(){
         
         tarifaAuto = tarifaAutoNormal;
         tarifaCamion = tarifaCamionNormal;
@@ -63,9 +63,10 @@ public class BancoDatos {
         tarifaCamion = tarifaTruck;
         tarifaOmnibus = tarifaBus;
         sumaEsperas = 0.0;
-        tarifaAutoNormal = tarifaAuto;
-        tarifaCamionNormal = tarifaCamion;
-        tarifaOmnibusNormal = tarifaOmnibus;
+        tarifaAutoNormal = tarifaCar;
+        tarifaCamionNormal = tarifaTruck;
+        tarifaOmnibusNormal = tarifaBus;
+        bancoDatos = this;
         
     }
     public void clean(){

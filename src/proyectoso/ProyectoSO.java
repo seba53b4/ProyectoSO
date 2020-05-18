@@ -182,8 +182,16 @@ public class ProyectoSO {
                                 }
                             }
                         } else {
-                                System.out.println("entra ");
-                                hf = new HandleFile(input);
+                                //System.out.println("entra ");
+                                File f = new File(dir+"/testCasesEntrada/"+input);
+                                if (f.exists()) {
+                                    hf = new HandleFile(input);
+                                    System.out.println("\n Seleccionado correctamente el Test Case "+ input);
+                                } else {
+                                    System.out.println("\n ** ERROR: El archivo '"+ input +"' no se encuentra en la carpeta testCasesEntrada ** \n");
+                                    todoOk = false;
+                                }
+                                
                         }
                         if (todoOk) {
                             

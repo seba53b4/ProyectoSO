@@ -64,7 +64,7 @@ public class Casilla implements Runnable{
             accesoCasilla.acquire();
             IVehiculo aux ;
             
-            aux =  enEspera.remove();
+            aux =  enEspera.peek();
             
             Date horaSalida;
             Date entradaReal = (Date) Reloj.getInstance().getDate().clone(); 
@@ -104,6 +104,7 @@ public class Casilla implements Runnable{
             if (this.numeroCasilla > 1  && enEspera.isEmpty()) {
                 this.setHabilitada(false);
             }
+            enEspera.remove();
             accesoCasilla.release();
             
         } catch (InterruptedException ex) {
