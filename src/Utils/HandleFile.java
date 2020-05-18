@@ -67,7 +67,6 @@ public class HandleFile{
           } catch (IOException ex) {
               Logger.getLogger(HandleFile.class.getName()).log(Level.SEVERE, null, ex);
           }
-          
           try {
               fw = new FileWriter(f,true);
           } catch (IOException ex) {
@@ -81,7 +80,6 @@ public class HandleFile{
           bufferWriter = new BufferedWriter(fw);
           formatoFecha = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
           try {
-              
               bufferWriter.write("Hilo;Casilla;Tipo;Telepeaje;Matricula;Demora Vehiculo;Hora Entrada;Hora Salida;Tiempo Espera"+" \n");
           } catch(Exception e) {
               System.out.println("Excepcion leyendo fichero" + e);

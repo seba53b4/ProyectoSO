@@ -90,7 +90,7 @@ public void iniciar() throws InterruptedException {
                         continue;
                     }
                 }
-            }
+            
 
             for (int i = 0; i < casillas.length; i++) {
                 
@@ -120,7 +120,7 @@ public void iniciar() throws InterruptedException {
                         }
                     }
                 }
-            
+            }
     }
     for (Thread hilo : hilos) {
         hilo.join();
