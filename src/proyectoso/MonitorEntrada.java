@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 /**
  *
  * @author Seba-OS
+ * Monitor encargado de evaluar el estado de las casillas para permitir entrar un vehículo.
  */
 public class MonitorEntrada {
     

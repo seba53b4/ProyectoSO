@@ -10,6 +10,14 @@ import Objects.IVehiculo;
 /**
  *
  * @author Seba-OS
+ * 
+ * Clase que se encarga del monitoreo de indicadores del sistema.
+ * Cantidad de vehículos procesados.
+ * Costo operativo
+ * Tiempos de espera
+ * Recaudación total
+ * Tarifas
+ * 
  */
 public class BancoDatos {
     
@@ -26,6 +34,13 @@ public class BancoDatos {
     private Double tarifaCamionNormal;
     private Double tarifaOmnibusNormal;
     
+    /**
+     * Crea un nuevo banco de datos con tarifas especificadas por parámetro.
+     * @param tarifaCar
+     * @param tarifaTruck
+     * @param tarifaBus
+     * @return 
+     */
     public static BancoDatos initBancoDatos(Double tarifaCar, Double tarifaTruck, Double tarifaBus){
         if (bancoDatos == null) {
             bancoDatos = new BancoDatos(tarifaCar, tarifaTruck, tarifaBus);
@@ -33,12 +48,18 @@ public class BancoDatos {
         return bancoDatos;
     }
     
+    /**
+     * Obtiene el banco de datos
+     * @return bancoDatos
+     */
     public static BancoDatos getBancoDatos(){
         return bancoDatos;
     }
     
     
-    
+    /**
+     * Aumenta la tarifa en horas pico.
+     */
     public void setAumentarTarifasHoraPico(){
         
         tarifaAuto += (tarifaAuto * 0.2);
@@ -47,6 +68,9 @@ public class BancoDatos {
         
     }   
     
+    /**
+     * Vuelve la tarifa a la normalidad.
+     */
     public void setTarifaNormal(){
         
         tarifaAuto = tarifaAutoNormal;
@@ -55,6 +79,12 @@ public class BancoDatos {
         
     }
     
+    /**
+     * Crea un nuevo banco de datos
+     * @param tarifaCar
+     * @param tarifaTruck
+     * @param tarifaBus 
+     */
     public BancoDatos(Double tarifaCar, Double tarifaTruck, Double tarifaBus){
         costoOperativo = 0.0;
         recaudacion = 0.0;
@@ -68,6 +98,10 @@ public class BancoDatos {
         tarifaOmnibusNormal = tarifaOmnibus;
         
     }
+    
+    /**
+     * Limpia el banco de datos.
+     */
     public void clean(){
         costoOperativo = 0.0;
         recaudacion = 0.0;
@@ -78,18 +112,34 @@ public class BancoDatos {
         sumaEsperas = 0.0;
     }
     
+    /**
+     * Obtiene la cantidad de vehículos procesados
+     * @return cantidadVehiculos
+     */
     public int getCantidadVehiculos() {
         return cantidadVehiculos;
     }
 
+    /**
+     * Obtiene el costoOperativo por los vehículos procesados en esta ejecución.
+     * @return costoOperativo
+     */
     public Double getCostoOperativo() {
         return costoOperativo;
     }
 
+    /**
+     * Obtiene el recaudacion por los vehículos procesados en esta ejecución.
+     * @return recaudacion
+     */
     public Double getRecaudacion() {
         return recaudacion;
     }
     
+    /**
+     * Aumenta la recaudación con respecto a las tarifas actuales.
+     * @param tipo
+     */
     public synchronized void aumentarRecaudacion(String tipo){
         this.recaudacion += getTarifa(tipo);
     }
@@ -110,6 +160,11 @@ public class BancoDatos {
         }
     }
     
+    /**
+     * Registrar los datos del vehículo procesado
+     * @param veh
+     * @param espera 
+     */
     public synchronized void registrar(IVehiculo veh, Long espera){
        
         incCantidadVehiculos();
@@ -118,19 +173,33 @@ public class BancoDatos {
         aumentarSumaEsperas(espera.doubleValue());
     }
     
+    /**
+     * Inicializar la cantidad de vehículos
+     */
     public synchronized void incCantidadVehiculos() {
         this.cantidadVehiculos = cantidadVehiculos + 1;
     }
     
+    /**
+     * Aumentar el costo operativo
+     * @param costo 
+     */
     public void aumentarCostoOperativo(Double costo) {
         this.costoOperativo = costoOperativo + costo;
     }
     
+    /**
+     * Aumentar la espera total
+     * @param espera 
+     */
     public synchronized void aumentarSumaEsperas(Double espera) {
         this.sumaEsperas += espera;
     }
     
-    
+    /**
+     * Obtener el promedio de espera de los vehículos
+     * @return promedio
+     */
     public Double getPromedioEspera(){
         return sumaEsperas/this.cantidadVehiculos;
     }

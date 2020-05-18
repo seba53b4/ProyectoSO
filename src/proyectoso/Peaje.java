@@ -16,6 +16,7 @@ import java.util.Queue;
 /**
  *
  * @author Seba-OS
+ * La clase peaje es la encargada de la planificación.
  */
 public class Peaje{
 
@@ -29,7 +30,9 @@ public class Peaje{
         return peaje;
     }
   
-    
+    /**
+     * Se crea un peaje de 5 casillas y luego se lee el archivo de entrada.
+     */
     public Peaje(){
         
         casillas = new Casilla[5];
@@ -46,6 +49,10 @@ public class Peaje{
         
     }
     
+/**
+ * Se inicia el peaje con la casilla 0 y 1 habilitadas. Se controlan los eventos, emergencias y vehículos leídos del archivo de entrada.
+ * @throws InterruptedException 
+ */    
 public void iniciar() throws InterruptedException {
 
     Thread aux;
@@ -128,7 +135,12 @@ public void iniciar() throws InterruptedException {
     HandleFile.getInstance().closeArchivoWriter();
 }
     
-    
+    /**
+     * 
+     * @param a
+     * @param veh 
+     * Método que se encarga de ingresar un vehículo a la lista de espera de una casilla.
+     */
     public void ingresarVehiculoAEspera(Casilla a, IVehiculo veh){
         
         System.out.println("El vehiculo " + veh.getMatricula() + " ingresa a la lista de espera de la " + a.getNumeroCasilla());
@@ -138,6 +150,10 @@ public void iniciar() throws InterruptedException {
         nuevoHilo.start();
     }
     
+    /**
+     * Método que se encarga de obtener la mejor siguiente casilla para una emergencia o telepeaje.
+     * @return la mejor siguiente casilla para una emergencia o telepeaje.
+     */
     public Casilla siguienteCasillaEspecial(){
         
         // Si alguna de las primeras 2 estan vacias 
@@ -159,6 +175,11 @@ public void iniciar() throws InterruptedException {
         }
         return ret;
     }
+    
+    /**
+     * Método que se encarga de obtener la mejor siguiente casilla más libre.
+     * @return la mejor siguiente casilla más libre.
+     */
     public Casilla siguienteCasilla(){
         
         // Selección de pivote

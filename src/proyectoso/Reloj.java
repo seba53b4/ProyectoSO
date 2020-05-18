@@ -11,6 +11,7 @@ import java.util.Date;
 
 /**
  * Encagada de simular el tiempo
+ * 
  * @author Seba-OS
  */
 

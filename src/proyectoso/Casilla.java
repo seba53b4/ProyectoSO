@@ -20,6 +20,9 @@ import java.util.logging.Logger;
 /**
  *
  * @author Seba-OS
+ * 
+ * Clase casilla que implementa Runnable. 
+ * Encargada de procesar los vehículos que llegan al peaje.
  */
 public class Casilla implements Runnable{
 
@@ -28,35 +31,73 @@ public class Casilla implements Runnable{
     private boolean habilitada;
     private Semaphore accesoCasilla;
     private boolean bloqueada;
-
+    
+    /**
+     * Cuando hay un evento se bloquea esta casilla
+     * @param bloqueada 
+     */
     public void setBloqueada(boolean bloqueada) {
         this.bloqueada = bloqueada;
     }
-
+    /**
+     * Retorna true si la casilla esta bloqueada por un evento.
+     * @return bloqueada
+     */
     public synchronized boolean isBloqueada() {
         return bloqueada;
     }
 
+    /**
+     * Habilita la casilla. Se vuelve una casilla operativa.
+     * @param habilitada 
+     */
     public void setHabilitada(boolean habilitada) {
         this.habilitada = habilitada;
     }
     
+    /**
+     * Obtiene la lista de espera de la casilla.
+     * @return enEspera
+     */
     public synchronized Queue<IVehiculo> getEnEspera() { //
         return enEspera;
     }
-
+    
+     /**
+     * Retorna true si la casilla esta hablilitada por un evento.
+     * @return hablitada
+     */
     public boolean isHabilitado() {
         return habilitada ;
     }
     
-    public Casilla(int numCasilla, boolean tel,boolean av){
+    /**
+     * Crea una nueva casilla con los parámetros
+     * @param numCasilla numero de la casilla
+     * @param tieneTelepeaje boolean si tiene telepeaje
+     * @param habilitada boolean si esta habilitada
+     */
+    public Casilla(int numCasilla, boolean tieneTelepeaje,boolean habilitada){
         enEspera = new ConcurrentLinkedDeque<IVehiculo>() ;
-        habilitada = av;
+        habilitada = habilitada;
         numeroCasilla = numCasilla;
         accesoCasilla = new Semaphore(1);
         bloqueada = false;
     }
     
+    /**
+     * Método run de la casilla.
+     * Esta clase provee la principal funcionalidad del sistema, 
+     * el procesamiento de los vehículos.
+     * Como esta operación es critica ya que el sistema soporta varios hilos
+     * (herencia de thread), es clave el proteger la sección critica del 
+     * sistema para evitar errores como la facturación y 
+     * la solapación de vehículos.
+     * esta clase define e implementa un semáforo que controla el acceso a la porción del código
+     * considerada como sección critica, básicamente cuando un hilo esta haciendo uso
+     * de esa porción del código, el semáforo imposibilita que otro hilo pueda ingresar.
+     * 
+     */
     @Override
     public void run() {
         
@@ -110,17 +151,29 @@ public class Casilla implements Runnable{
             Logger.getLogger(Casilla.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
+    /**
+     * Obtiene el número de la casilla.
+     * @return nroCasilla
+     */
     public int getNumeroCasilla() {
         return numeroCasilla;
     }
     
+    /**
+     * Ingresa un vehículo a la lista de espera
+     * @param veh 
+     */
     public void addVehiculoEnEspera(IVehiculo veh){
         synchronized(enEspera){
             this.enEspera.add(veh);
         }
     }
     
+    /**
+     * Obtiene la cantidad de vehículos en la lista de espera.
+     * @return listaEnEspera
+     */
     public int getCantidadEnEspera(){
         return this.enEspera.size();
     }

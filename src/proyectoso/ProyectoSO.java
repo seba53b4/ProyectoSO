@@ -18,6 +18,9 @@ public class ProyectoSO {
 
     /**
      * @param args the command line arguments
+     * contiene el procedimiento que da inicio al programa (main). 
+     * El cual se encarga de crear una instancia de la clase Peaje.
+     * 
      */
     public static void main(String[] args) throws InterruptedException {
         

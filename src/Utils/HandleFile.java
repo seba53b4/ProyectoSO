@@ -33,6 +33,9 @@ import java.util.logging.Logger;
 /**
  *
  * @author Seba-OS
+ * Clase que provee funcionalidades necesarias para el manejo de archivos.
+ * Levanta información de archivos.
+ * Genera archivos de salida.
  */
 public class HandleFile{
     
