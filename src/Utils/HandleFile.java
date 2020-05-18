@@ -6,6 +6,7 @@
 package Utils;
 
 
+import Objects.Evento;
 import Objects.IVehiculo;
 import Objects.Vehiculo;
 import java.io.BufferedReader;
@@ -38,25 +39,18 @@ public class HandleFile{
     private final BufferedWriter bufferWriter;
     private final SimpleDateFormat formatoFecha;
     private final String entrada;
+    private Queue<Evento> eventos;
+
+    public Queue<Evento> getEventos() {
+        return eventos;
+    }
     
     
     
     public SimpleDateFormat getFormatoFecha(){
         return this.formatoFecha;
     }
-    
-    
-    
-//    public HandleFile(){
-//        
-//         dir = "";
-//         fw = null;
-//         fr = null;
-//         bufferWriter = null;
-//         formatoFecha = null;
-//         entrada = null;
-//         
-//    }
+   
     public static HandleFile getInstance(){
         
         return HandleFile.hf;
@@ -92,6 +86,9 @@ public class HandleFile{
           } catch(Exception e) {
               System.out.println("Excepcion leyendo fichero" + e);
           }
+          
+          eventos = new LinkedList<Evento>();
+          
           hf = this;
     }
 
@@ -140,7 +137,9 @@ public class HandleFile{
                 if (!linea.contains("#")) {
                     
                     line = linea.split(";");
-                    if (line[2].equals("1")) {
+                    if (line[0].equals("evento")) {
+                        eventos.add(new Evento(Integer.parseInt(line[1]),parseDate(line[2]), parseDate(line[3])));
+                    }else if (line[2].equals("1")) {
                         res.add(new Vehiculo(line[0],line[1],true,Integer.parseInt(line[3]),parseDate(line[4])));
                     } else {
                         res.add(new Vehiculo(line[0],line[1],false,Integer.parseInt(line[3]),parseDate(line[4])));

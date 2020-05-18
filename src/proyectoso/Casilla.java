@@ -27,6 +27,15 @@ public class Casilla implements Runnable{
     private ConcurrentLinkedDeque<IVehiculo> enEspera; //
     private boolean habilitada;
     private Semaphore accesoCasilla;
+    private boolean bloqueada;
+
+    public void setBloqueada(boolean bloqueada) {
+        this.bloqueada = bloqueada;
+    }
+
+    public synchronized boolean isBloqueada() {
+        return bloqueada;
+    }
 
     public void setHabilitada(boolean habilitada) {
         this.habilitada = habilitada;
@@ -45,6 +54,7 @@ public class Casilla implements Runnable{
         habilitada = av;
         numeroCasilla = numCasilla;
         accesoCasilla = new Semaphore(1);
+        bloqueada = false;
     }
     
     @Override
@@ -58,11 +68,11 @@ public class Casilla implements Runnable{
             }
             Date horaSalida;
             Date entradaReal = (Date) Reloj.getInstance().getDate().clone(); 
-            System.out.println(Thread.currentThread().getName() +" hora real de entrada " + HandleFile.getInstance().getFormatoFecha().format(entradaReal) +" de vehiculo "+ aux.getMatricula());
+           // System.out.println(Thread.currentThread().getName() +" hora real de entrada " + HandleFile.getInstance().getFormatoFecha().format(entradaReal) +" de vehiculo "+ aux.getMatricula());
             int wait = aux.getTime().getSeconds()+aux.getEspera();
             horaSalida = (Date) Reloj.getInstance().getDate().clone();
             horaSalida.setSeconds(wait);
-            System.out.println(Thread.currentThread().getName() +" Hora salida estimada " + HandleFile.getInstance().getFormatoFecha().format(horaSalida)+" de vehiculo "+ aux.getMatricula());
+          //  System.out.println(Thread.currentThread().getName() +" Hora salida estimada " + HandleFile.getInstance().getFormatoFecha().format(horaSalida)+" de vehiculo "+ aux.getMatricula());
             
             //Thread.sleep(10 * aux.getEspera());
             
