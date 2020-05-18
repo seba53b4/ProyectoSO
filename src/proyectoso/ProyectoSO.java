@@ -30,7 +30,6 @@ public class ProyectoSO {
         Double tarifaCamion = 195.0;
         Double tarifaBus = 195.0;
         int segundos = 0 , horas = 21, minutos = 40, dia = 3 , mes = 5,año = 2020;
-        
         int speed = 1;
         String[] entradas;
         Scanner scanner = new Scanner(stream);
@@ -38,6 +37,7 @@ public class ProyectoSO {
         System.out.println("\n     Proyecto Obligatorio - Sistemas Operativos 2020\n\n");
         System.out.println("\n------- Ayuda -------\n");
         System.out.println("ex 'nombreArchivo' : Se procede a ejecutar la simulación");
+        System.out.println("ex t 'numCaso': Selección de caso cargado de carpeta testCasesEntrada");
         System.out.println("ch speed 'Numero en milisegundos': Cambiar la velocidad del Reloj. ");
         System.out.println("ch tarifa 'tarifaAuto' 'tarifaCamion' 'tarifaOmnibus': Cambiar la tarifa de vehículos. ");
         System.out.println("ch date 'hora' 'minutos' 'segundos' 'dia' 'mes' 'año': Cambiar la fecha de simulación. ");
@@ -45,20 +45,18 @@ public class ProyectoSO {
         System.out.println("h: Ayuda");
         System.out.println("q: Salir");
         System.out.println("\n---------------------\n");
-        
-        
         while (!input.equals("q")) {
-            
             System.out.println("Ingrese operación:");
             input = scanner.next();
             
             switch (input) {
                 case "h":
                     System.out.println("\n------- Ayuda -------\n");
-                    System.out.println("ex 'nombreArchivo' : Se procede a ejecutar la simulación");
-                    System.out.println("ch speed 'Numero en milisegundos': Cambiar la velocidad del Reloj. ");
-                    System.out.println("ch tarifa 'tarifaAuto' 'tarifaCamion' 'tarifaOmnibus': Cambiar la tarifa de vehículos. ");
-                    System.out.println("ch date 'hora' 'minutos' 'segundos' 'dia' 'mes' 'año': Cambiar la fecha de simulación. ");
+                    System.out.println("ex 'Nombre de archivo' : Se procede a ejecutar la simulación");
+                    System.out.println("ex t 'Número de Caso': Selección de caso cargado de carpeta testCasesEntrada");
+                    System.out.println("ch speed 'Numero en milisegundos': Cambiar la velocidad del Reloj.");
+                    System.out.println("ch tarifa 'tarifaAuto' 'tarifaCamion' 'tarifaOmnibus': Cambiar la tarifa de vehículos.");
+                    System.out.println("ch date 'hora' 'minutos' 'segundos' 'dia' 'mes' 'año': Cambiar la fecha de simulación.");
                     System.out.println("show: Muestra datos de uso para la simulación");
                     System.out.println("h: Ayuda");
                     System.out.println("q: Salir");
@@ -153,11 +151,45 @@ public class ProyectoSO {
                         break;
                 case "ex":
                     if (input.contains("ex")) {
+                        hf = new HandleFile();
+                        hf.exportarTests();
+                        boolean todoOk = true;
+                        File[] tests = hf.getArchivosCarpeta("testCasesEntrada");
+                        
                         input = scanner.next();
-                        File f = new File(dir+"\\/src\\/testCasesEntrada\\/"+input);
-                        if (f.exists()) {
+                        
+                        if (input.equals("t")) {
+                            System.out.println("\nTest Cases existentes en carpeta testCasesEntrada\n");
+                            for (int i = 0; i < tests.length; i++) {
+                                System.out.println(i+". "+tests[i].getName());
+                            }
+                            String msg = "\n Seleccione por el número el archivo elegido entre ";
+                            if (tests.length == 0) {
+                                System.out.println("\n No hay test en carpeta\n");
+                            } else {
+                                msg += "[0 .. "+ tests.length+"] \n";
+                            }
                             
-                            hf = new HandleFile(input);
+                            input = scanner.next();
+                            if (HandleFile.isNumeric(input)) {
+                                if (Integer.parseInt(input) < tests.length) {
+                                    System.out.println("CARGA ARCHIVOOO:  "+tests[Integer.parseInt(input)].getName());
+                                    hf = new HandleFile(tests[Integer.parseInt(input)].getName());
+                                    System.out.println("\n Seleccionado correctamente el Test Case "+ tests[Integer.parseInt(input)].getName());
+                                } else {
+                                    System.out.println("\n ** ERROR: Número ingresado fuera de rango ** \n");
+                                    todoOk = false;
+                                }
+                            }
+                        } else {
+                                System.out.println("entra ");
+                                hf = new HandleFile(input);
+                        }
+                        if (todoOk) {
+                            
+                            System.out.println("**************************");
+                            System.out.println("\n Ejecutando Simulación \n");
+                            System.out.println("**************************\n");
                             Peaje peaje = new Peaje();
                             BancoDatos.initBancoDatos(tarifaAuto, tarifaCamion, tarifaBus);
                             Reloj reloj = new Reloj(speed, horas, minutos, segundos, dia, mes, año);
@@ -167,26 +199,26 @@ public class ProyectoSO {
                             System.out.println("Costo operativo: " + BancoDatos.getBancoDatos().getCostoOperativo());
                             System.out.println("Recaudación: " + BancoDatos.getBancoDatos().getRecaudacion());
                             System.out.println("Promedio de espera: " + BancoDatos.getBancoDatos().getPromedioEspera());
-                            System.out.println("\nEjecución de archivo "+input + " finalizada.\n");
+                            if (HandleFile.isNumeric(input)) {
+                                System.out.println("\nEjecución de archivo "+ tests[Integer.parseInt(input)].getName()+ " finalizada.\n");
+                            } else {
+                                System.out.println("\nEjecución de archivo "+ input + " finalizada.\n");
+                            }
                             BancoDatos.getBancoDatos().clean();
                             reloj.stop();
-                           
-                        } else {
-                            System.out.println("\n** Error en la dirección del archivo de entrada **\n");
-                            
                         }
-                       
+                    } else {
+                        System.out.println("\n** Error en la dirección del archivo de entrada **\n");
                         
                     }
                     break;
-                    
                 default:
                         cantidadErrores++;
                         System.out.println("\nEntrada errónea, intente de nuevo o ingrese h por ayuda.\n");
                         if (cantidadErrores == 3) {
-                            cantidadErrores = 0;
                             System.out.println("\n------- Ayuda -------\n");
                             System.out.println("ex 'nombreArchivo' : Se procede a ejecutar la simulación");
+                            System.out.println("ex t 'numCaso': Selección de caso cargado de carpeta testCasesEntrada");
                             System.out.println("ch speed 'Numero en milisegundos': Cambiar la velocidad del Reloj. ");
                             System.out.println("ch tarifa 'tarifaAuto' 'tarifaCamion' 'tarifaOmnibus': Cambiar la tarifa de vehículos. ");
                             System.out.println("ch date 'hora' 'minutos' 'segundos' 'dia' 'mes' 'año': Cambiar la fecha de simulación. ");

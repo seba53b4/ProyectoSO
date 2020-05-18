@@ -12,9 +12,14 @@ import Objects.Vehiculo;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,7 +50,44 @@ public class HandleFile{
         return eventos;
     }
     
+    public File[] getArchivosCarpeta(String entrada){
+      File carpeta = new File(entrada);
+      FileFilter filtro = new FileFilter() {
+      @Override
+      public boolean accept(File arch) {
+        return arch.isFile();
+      }};
+      File[] archivos = carpeta.listFiles(filtro);
+       
+      return archivos;
+    }
     
+    public void exportarTests(){
+        
+        File f = new File(dir+"\\/src\\/testCasesEntrada");
+        File[] tests = getArchivosCarpeta(dir+"\\/src\\/testCasesEntrada");
+        File testFolder = new File("testCasesEntrada");
+        
+        if (!testFolder.exists()) {
+            testFolder.mkdir();
+            
+        }
+        for (int i = 0; i < tests.length; i++) {
+            try {
+                //System.out.println("Exportar test " +tests[i].getName() );
+                Files.copy(Paths.get(tests[i].getAbsolutePath()), Paths.get(testFolder.getAbsolutePath()+"/"+tests[i].getName()), StandardCopyOption.REPLACE_EXISTING);
+                //System.out.println("Path origen "+ Paths.get(tests[i].getAbsolutePath()));
+                //System.out.println("Path destino "+ Paths.get(testFolder.getAbsolutePath()));
+            } catch (FileNotFoundException ex) {
+                System.out.println("Error no se encuentra archivo de tests "+ tests[i].getName());
+            } catch (IOException ex) {
+                System.out.println("Error al copiar archivo de tests "+ tests[i].getName());
+            }catch (Exception ex) {
+                System.out.println("Error exception "+ ex+" en "+ tests[i].getName());
+            }
+        }
+        
+    }
     
     public SimpleDateFormat getFormatoFecha(){
         return this.formatoFecha;
@@ -56,11 +98,26 @@ public class HandleFile{
         return HandleFile.hf;
     } 
     
+    
+    public HandleFile(){
+        dir = System.getProperty("user.dir");
+        this.entrada = "";
+        fw = null;
+        fr = null;
+        bufferWriter= null;
+        formatoFecha = null;
+        eventos = null;
+        hf = null;
+    }
     public HandleFile(String entrada)
     {        
           dir = System.getProperty("user.dir");
           this.entrada = entrada;
-          File f = new File(dir+"\\/src\\/testCasesSalida\\/"+"//salida_"+entrada+".csv");
+          File dirSalida = new File(dir+"\\/testCasesSalida");
+          if (!dirSalida.exists()) {
+              dirSalida.mkdir();
+          }
+          File f = new File(dir+"\\/testCasesSalida\\/"+"//salida_"+entrada+".csv");
           f.delete();
           try {
               f.createNewFile();
@@ -73,7 +130,7 @@ public class HandleFile{
               Logger.getLogger(HandleFile.class.getName()).log(Level.SEVERE, null, ex);
           }
           try {
-              fr = new FileReader(dir+"\\/src\\/testCasesEntrada\\/"+entrada);
+              fr = new FileReader(dir+"/testCasesEntrada/"+entrada);
           } catch (IOException ex) {
               Logger.getLogger(HandleFile.class.getName()).log(Level.SEVERE, null, ex);
           }

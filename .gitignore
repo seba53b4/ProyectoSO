@@ -3,10 +3,13 @@
 build/
 nbproject/private
 dist/
-
+testCasesEntrada
+testCasesSalida
 # Class Files #
 *.class
 salida.txt
+*.txt
+src/testCasesSalida
 # Package Files #
 
 nbproject/private/private.properties
