@@ -26,11 +26,22 @@ public class ProyectoSO {
         int cantidadErrores = 0;
         InputStream stream = System.in;
         HandleFile hf ;
+        Double tarifaAuto = 115.0;
+        Double tarifaCamion = 195.0;
+        Double tarifaBus = 195.0;
+        int segundos = 0 , horas = 21, minutos = 40, dia = 3 , mes = 5,año = 2020;
+        
+        int speed = 1;
+        String[] entradas;
         Scanner scanner = new Scanner(stream);
         String path = "";
         System.out.println("\n     Proyecto Obligatorio - Sistemas Operativos 2020\n\n");
         System.out.println("\n------- Ayuda -------\n");
         System.out.println("ex 'nombreArchivo' : Se procede a ejecutar la simulación");
+        System.out.println("ch speed 'Numero en milisegundos': Cambiar la velocidad del Reloj. ");
+        System.out.println("ch tarifa 'tarifaAuto' 'tarifaCamion' 'tarifaOmnibus': Cambiar la tarifa de vehículos. ");
+        System.out.println("ch date 'hora' 'minutos' 'segundos' 'dia' 'mes' 'año': Cambiar la fecha de simulación. ");
+        System.out.println("show: Muestra datos de uso para la simulación");
         System.out.println("h: Ayuda");
         System.out.println("q: Salir");
         System.out.println("\n---------------------\n");
@@ -45,6 +56,10 @@ public class ProyectoSO {
                 case "h":
                     System.out.println("\n------- Ayuda -------\n");
                     System.out.println("ex 'nombreArchivo' : Se procede a ejecutar la simulación");
+                    System.out.println("ch speed 'Numero en milisegundos': Cambiar la velocidad del Reloj. ");
+                    System.out.println("ch tarifa 'tarifaAuto' 'tarifaCamion' 'tarifaOmnibus': Cambiar la tarifa de vehículos. ");
+                    System.out.println("ch date 'hora' 'minutos' 'segundos' 'dia' 'mes' 'año': Cambiar la fecha de simulación. ");
+                    System.out.println("show: Muestra datos de uso para la simulación");
                     System.out.println("h: Ayuda");
                     System.out.println("q: Salir");
                     System.out.println("\n---------------------\n");
@@ -52,6 +67,90 @@ public class ProyectoSO {
                 case "q":
                     System.out.println("\nEjecución finalizada\n");
                     break;
+                case "show":
+                    System.out.println("\n------- Informe de Datos -------\n");
+                    System.out.println("Fecha: "+horas+":"+minutos+":"+segundos+" "+dia+"/"+mes+"/"+año);
+                    System.out.println("Velocidad de Reloj: "+ speed);
+                    System.out.println("Tarifa de Auto: "+ tarifaAuto);
+                    System.out.println("Tarifa de Camion: "+ tarifaCamion);
+                    System.out.println("Tarifa de Omnibus: "+ tarifaBus);
+                    System.out.println("\n---------------------\n");
+                    break;
+                case "ch":
+                        input = scanner.next();
+                        switch (input) {
+                            case "speed":
+                                while (!input.equals("q")) {
+                                    //System.out.println("\n Ingrese valor de velocidad del Reloj o ingrese q para volver atrás \n");
+                                    input = scanner.next();
+                                    if (HandleFile.isNumeric(input)) {
+                                        speed = Integer.parseInt(input);
+                                        System.out.println("\nValor ingresado correctamente\n");
+                                        break;
+                                    } else {
+                                        System.out.println("\n Valor erróneo \n");
+                                        break;
+                                    }
+                                }
+                                input = "dummy";
+                                break;
+                            case "tarifa":
+
+                                //System.out.println("\n Ingrese valor de velocidad del Reloj o ingrese q para volver atrás \n");
+                                entradas = new String[5];
+                                for (int i = 0; i < entradas.length; i++) {
+                                    input = scanner.next();
+                                    if (HandleFile.isNumeric(input)){
+                                        entradas[i] = input;
+                                    } else {
+                                        System.out.println("\n Valor erróneo "+ input);
+                                        input = "q";
+                                        break;
+                                    }
+                                }
+                                if (!input.equals("q")) {
+
+
+                                    tarifaAuto =  Double.parseDouble(entradas[0]);
+                                    tarifaCamion = Double.parseDouble(entradas[1]);
+                                    tarifaBus = Double.parseDouble(entradas[2]);
+                                    System.out.println("\nValores ingresados correctamente\n");
+                                }
+
+
+                                input = "dummy";
+                                break;
+                            case "date":
+
+                                entradas = new String[6];
+                                for (int i = 0; i < entradas.length; i++) {
+                                    input = scanner.next();
+                                    if (HandleFile.isNumeric(input)){
+                                        entradas[i] = input;
+                                    } else {
+                                        System.out.println("\n Valor erróneo "+ input);
+                                        input = "q";
+                                        break;
+                                    }
+                                }
+
+                                if (!input.equals("q")) {
+                                    horas = Integer.parseInt(entradas[0]);
+                                    minutos = Integer.parseInt(entradas[1]);
+                                    segundos= Integer.parseInt(entradas[2]);
+                                    dia = Integer.parseInt(entradas[3]);
+                                    mes = Integer.parseInt(entradas[4]);
+                                    año = Integer.parseInt(entradas[5]);
+                                    System.out.println("\nValores ingresados correctamente\n");
+                                }
+
+
+                                input = "dummy";
+                                break;
+                            default:
+                                System.out.println("\n** Error en la entrada del comando **\n");
+                        }
+                        break;
                 case "ex":
                     if (input.contains("ex")) {
                         input = scanner.next();
@@ -59,13 +158,11 @@ public class ProyectoSO {
                         if (f.exists()) {
                             
                             hf = new HandleFile(input);
-                            
                             Peaje peaje = new Peaje();
-                            BancoDatos.initBancoDatos(115.0, 195.0, 195.0);
-                            Reloj reloj = new Reloj(1, 21, 40, 0, 3, 5, 2020);
+                            BancoDatos.initBancoDatos(tarifaAuto, tarifaCamion, tarifaBus);
+                            Reloj reloj = new Reloj(speed, horas, minutos, segundos, dia, mes, año);
                             reloj.start();
                             peaje.iniciar();
-                            
                             System.out.println("Cantidad de vehículos: " + BancoDatos.getBancoDatos().getCantidadVehiculos());
                             System.out.println("Costo operativo: " + BancoDatos.getBancoDatos().getCostoOperativo());
                             System.out.println("Recaudación: " + BancoDatos.getBancoDatos().getRecaudacion());
@@ -73,7 +170,7 @@ public class ProyectoSO {
                             System.out.println("\nEjecución de archivo "+input + " finalizada.\n");
                             BancoDatos.getBancoDatos().clean();
                             reloj.stop();
-                           // HandleFile.getInstance();
+                           
                         } else {
                             System.out.println("\n** Error en la dirección del archivo de entrada **\n");
                             
@@ -90,6 +187,10 @@ public class ProyectoSO {
                             cantidadErrores = 0;
                             System.out.println("\n------- Ayuda -------\n");
                             System.out.println("ex 'nombreArchivo' : Se procede a ejecutar la simulación");
+                            System.out.println("ch speed 'Numero en milisegundos': Cambiar la velocidad del Reloj. ");
+                            System.out.println("ch tarifa 'tarifaAuto' 'tarifaCamion' 'tarifaOmnibus': Cambiar la tarifa de vehículos. ");
+                            System.out.println("ch date 'hora' 'minutos' 'segundos' 'dia' 'mes' 'año': Cambiar la fecha de simulación. ");
+                            System.out.println("show: Muestra datos de uso para la simulación");
                             System.out.println("h: Ayuda");
                             System.out.println("q: Salir");
                             System.out.println("\n---------------------\n");

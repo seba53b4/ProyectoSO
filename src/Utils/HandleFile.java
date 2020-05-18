@@ -157,6 +157,14 @@ public class HandleFile{
         
     }
     
+    public static boolean isNumeric(String cadena){
+        try {
+            Integer.parseInt(cadena);
+            return true;
+        } catch (NumberFormatException nfe){
+            return false;
+        }
+    }
     
     public synchronized boolean writeArchivo(String line)
     {
