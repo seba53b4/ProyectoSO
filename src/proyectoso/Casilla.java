@@ -82,11 +82,11 @@ public class Casilla implements Runnable{
             synchronized(Reloj.getInstance()){
                 try {
                     
-                    System.out.println("Procesa casilla " + this.numeroCasilla +" el vehiculo: " + aux.getTipo() + " de mat: " + aux.getMatricula()+ " hora real salida: "+ Reloj.getInstance().getHora());
+                    System.out.println("Procesa casilla " + this.numeroCasilla +" el vehiculo de tipo " + aux.getTipo() + " con matrícula: " + aux.getMatricula());
+                    System.out.print("Quedan en espera de la casilla " + this.getNumeroCasilla() + " "+ enEspera.size() + " vehículos: ");
                     for (IVehiculo ve : enEspera) {
-                        System.out.print("En espera "+ve.getMatricula());
+                        System.out.print(ve.getMatricula() + " ");
                     }
-                    
                     System.out.println("");
                     Long esperaVehiculo = new Long((Reloj.getInstance().getDate().getTime() - aux.getTime().getTime())/1000);
                     BancoDatos.getBancoDatos().registrar(aux, esperaVehiculo);

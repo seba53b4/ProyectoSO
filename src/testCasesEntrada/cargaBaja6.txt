@@ -1,0 +1,7 @@
+#tipo;matricula;telepeaje;espera;tiempo
+auto;AAA;0;60;21:40:04 03-05-2020
+auto;BBB;0;60;21:40:24 03-05-2020
+auto;CCC;0;60;21:40:44 03-05-2020
+auto;DDD;0;60;21:40:45 03-05-2020
+auto;EEE;0;60;21:41:04 03-05-2020
+auto;FFF;0;60;21:41:24 03-05-2020

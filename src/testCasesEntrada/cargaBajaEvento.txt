@@ -1,0 +1,8 @@
+#tipo;matricula;telepeaje;espera;tiempo
+#evento;numCasilla;FechaeventoInicial;FechaFinal
+evento;0;21:40:04 03-05-2020;21:40:44 03-05-2020
+evento;1;21:40:07 03-05-2020;21:40:45 03-05-2020
+auto;AAA;0;60;21:40:07 03-05-2020
+auto;BBB;0;60;21:40:24 03-05-2020
+auto;CCC;0;60;21:40:24 03-05-2020
+auto;DDD;0;60;21:40:45 03-05-2020

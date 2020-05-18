@@ -8,6 +8,7 @@ package proyectoso;
 import Objects.Evento;
 import Objects.IVehiculo;
 import Utils.HandleFile;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -57,11 +58,15 @@ public class Peaje{
                 if (!eventos.isEmpty()){
                     for (Evento evento : eventos) {
                         if (!eventos.isEmpty() && Reloj.getInstance().getDate().compareTo(eventos.peek().getFechaEvento()) == 0) {
-                            
+                            SimpleDateFormat formato =  new SimpleDateFormat("hh:mm:ss a dd-MMM-aa");
                             event = eventos.poll();
                             casillas[event.getNumeroCasilla()].setBloqueada(true);
-                            System.out.println("Fecha evento iniciado "+ event.getFechaEvento()+ " estado casilla "+event.getNumeroCasilla()+" "+casillas[event.getNumeroCasilla()].isBloqueada());
+                            System.out.println("*********************");
+                            System.out.println("Ocurre un evento en la casilla " + event.getNumeroCasilla());
+                            System.out.println("Se bloquea desde " + formato.format(event.getFechaEvento()) + " hasta " + formato.format(event.getFechaFinal()));
+                            //System.out.println("Fecha evento iniciado "+ event.getFechaEvento()+ " estado casilla "+event.getNumeroCasilla()+" "+casillas[event.getNumeroCasilla()].isBloqueada());
                             eventosPasados.add(event);
+                            System.out.println("*********************");
                         }
                     }
                 }
@@ -72,7 +77,10 @@ public class Peaje{
                 if (veh.getTelepeaje() || veh.getTipo().equals("emergencia")) {
                     Casilla vacia = siguienteCasillaEspecial();
                     if (vacia != null) {
-                        System.out.println("Parte A ingresa aca el vehiculo " + veh.getMatricula());
+                        System.out.println("Ingresa el vehiculo " + veh.getMatricula() + " al peaje planificador.");
+                        System.out.println("Es telepeaje o emergencia.");
+                        System.out.println("Es telepeaje? " + veh.getTelepeaje());
+                        System.out.println("Es emergencia? " + veh.getTipo());
                         ingresarVehiculoAEspera(vacia, veh);
                         continue;
                     }
@@ -85,12 +93,11 @@ public class Peaje{
                     if (!casillas[i].isBloqueada()) {
                         
                         if (casillas[i].isHabilitado() && casillas[i].getEnEspera().size()  < 3) {
-                            System.out.println("Parte B ingresa aca el vehiculo " + veh.getMatricula());
                             ingresarVehiculoAEspera(casillas[i], veh);
                             break;
                         }
                         if ( i == 4) {
-                            System.out.println("Parte C ingresa aca el vehiculo " + veh.getMatricula() + " estado casilla "+ casillas[i].isBloqueada());
+
                             ingresarVehiculoAEspera(siguienteCasilla(), veh);
                             break;
                         }
@@ -101,7 +108,7 @@ public class Peaje{
             if (!eventosPasados.isEmpty()) {
                     for (Evento eventPasado : eventosPasados) {
                         if (Reloj.getInstance().getDate().compareTo(eventPasado.getFechaFinal()) == 0) {
-                            System.out.println("Evento iniciado finaliza "+ eventPasado.toString());
+                            System.out.println("Finaliza el evento "+ eventPasado.toString());
                             casillas[eventPasado.getNumeroCasilla()].setBloqueada(false);
                             eventosPasados.remove(eventPasado);
                         }
@@ -117,7 +124,7 @@ public class Peaje{
     
     public void ingresarVehiculoAEspera(Casilla a, IVehiculo veh){
         
-        System.out.println("entra casilla " +a.getNumeroCasilla()+" estado "+ a.isBloqueada() +" el vehiculo "+ veh.getMatricula());
+        System.out.println("El vehiculo " + veh.getMatricula() + " ingresa a la lista de espera de la " + a.getNumeroCasilla());
         a.addVehiculoEnEspera(veh);
         Thread nuevoHilo = new Thread(a);
         hilos.add(nuevoHilo);
@@ -149,7 +156,7 @@ public class Peaje{
             }
         }
         for (int i = 1; i < casillas.length; i++) {
-            System.out.println("Estado de casilla: "+i+ " status "+ casillas[i].isBloqueada());
+            System.out.println("Pregunto la casilla " + casillas[i].getNumeroCasilla() + " está bloqueada? "+ casillas[i].isBloqueada());
             if (casillas[i].isBloqueada()) {
                 continue;
             }

@@ -35,7 +35,11 @@ public class Evento {
     }
     
     public String toString(){
-        return "Evento -> Numero Casilla: "+numeroCasilla +" Fecha Inicio: "+ HandleFile.getInstance().getFormatoFecha().format(fechaEvento)+
-                " Fecha Final: " + HandleFile.getInstance().getFormatoFecha().format(fechaFinal);
+        return " \n ************** "
+                + "\n Evento "
+                + "\n Numero Casilla: "+numeroCasilla +" "
+                + "\n Fecha Inicio: "+ HandleFile.getInstance().getFormatoFecha().format(fechaEvento)
+                + "\n Fecha Final: " + HandleFile.getInstance().getFormatoFecha().format(fechaFinal)
+                + "\n ************** ";
     }
 }

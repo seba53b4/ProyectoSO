@@ -1,5 +1,0 @@
-Hilo;Casilla;Tipo;Telepeaje;Matricula;Demora Vehiculo;Hora Entrada;Hora Salida;Tiempo Espera 
-Thread-1;2;auto;false;AAA;60 seg;09:40:07 PM 03-may-PM;09:41:07 PM 03-may-PM;60 
-Thread-3;3;auto;false;CCC;60 seg;09:40:24 PM 03-may-PM;09:41:24 PM 03-may-PM;60 
-Thread-4;0;auto;false;DDD;60 seg;09:40:45 PM 03-may-PM;09:41:45 PM 03-may-PM;60 
-Thread-2;2;auto;false;BBB;60 seg;09:40:24 PM 03-may-PM;09:42:24 PM 03-may-PM;120 

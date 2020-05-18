@@ -55,7 +55,7 @@ public class ProyectoSO {
                 case "ex":
                     if (input.contains("ex")) {
                         input = scanner.next();
-                        File f = new File(dir+"//"+input);
+                        File f = new File(dir+"\\/src\\/testCasesEntrada\\/"+input);
                         if (f.exists()) {
                             
                             hf = new HandleFile(input);

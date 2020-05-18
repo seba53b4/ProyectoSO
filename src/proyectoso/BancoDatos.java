@@ -49,9 +49,9 @@ public class BancoDatos {
         costoOperativo = 0.0;
         recaudacion = 0.0;
         cantidadVehiculos = 0;
-        tarifaAuto = 0.0;
-        tarifaCamion = 0.0;
-        tarifaOmnibus = 0.0;
+        tarifaAuto = this.getTarifa("auto");
+        tarifaCamion = this.getTarifa("camion");
+        tarifaOmnibus = this.getTarifa("omnibus");
         sumaEsperas = 0.0;
     }
     

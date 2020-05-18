@@ -60,7 +60,7 @@ public class HandleFile{
     {        
           dir = System.getProperty("user.dir");
           this.entrada = entrada;
-          File f = new File(dir+"//salida.csv");
+          File f = new File(dir+"\\/src\\/testCasesSalida\\/"+"//salida_"+entrada+".csv");
           f.delete();
           try {
               f.createNewFile();
@@ -74,7 +74,7 @@ public class HandleFile{
               Logger.getLogger(HandleFile.class.getName()).log(Level.SEVERE, null, ex);
           }
           try {
-              fr = new FileReader(dir+"//"+entrada);
+              fr = new FileReader(dir+"\\/src\\/testCasesEntrada\\/"+entrada);
           } catch (IOException ex) {
               Logger.getLogger(HandleFile.class.getName()).log(Level.SEVERE, null, ex);
           }
