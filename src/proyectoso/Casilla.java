@@ -9,7 +9,6 @@ import Objects.IVehiculo;
 import Utils.HandleFile;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.Semaphore;
@@ -44,6 +43,11 @@ public class Casilla implements Runnable{
     public synchronized Queue<IVehiculo> getEnEspera() { //
         return enEspera;
     }
+    public Queue<IVehiculo> clearFila(){
+        Queue<IVehiculo> ret = this.enEspera;
+        this.enEspera = new ConcurrentLinkedDeque<>();
+        return ret;
+    }
 
     public boolean isHabilitado() {
         return habilitada ;
@@ -64,49 +68,55 @@ public class Casilla implements Runnable{
             accesoCasilla.acquire();
             IVehiculo aux ;
             
-            aux =  enEspera.peek();
-            
-            Date horaSalida;
-            Date entradaReal = (Date) Reloj.getInstance().getDate().clone(); 
-            System.out.println(Thread.currentThread().getName() +" hora real de entrada " + HandleFile.getInstance().getFormatoFecha().format(entradaReal) +" de vehiculo "+ aux.getMatricula());
-            int wait = aux.getTime().getSeconds()+aux.getEspera();
-            horaSalida = (Date) Reloj.getInstance().getDate().clone();
-            horaSalida.setSeconds(wait);
-            System.out.println(Thread.currentThread().getName() +" Hora salida estimada " + HandleFile.getInstance().getFormatoFecha().format(horaSalida)+" de vehiculo "+ aux.getMatricula());
-            
-            //Thread.sleep(10 * aux.getEspera());
-            
-            while (Reloj.getInstance().getDate().compareTo(horaSalida) != 0 ) {
-
-            }
-            synchronized(Reloj.getInstance()){
-                try {
+            aux =  enEspera.poll();
+            if (aux != null) {
+                
+                Date horaSalida;
+                Date entradaReal = (Date) Reloj.getInstance().getDate().clone();
+                System.out.println(Thread.currentThread().getName() +" hora real de entrada " + HandleFile.getInstance().getFormatoFecha().format(entradaReal) +" de vehiculo "+ aux.getMatricula());
+                
+                System.out.println("HORA Salida ANTES"+ entradaReal);
+                horaSalida = Reloj.getInstance().esperarTiempo(aux.getEspera());
+                System.out.println("HORA Salida DESPUES"+ horaSalida);
+                
+                System.out.println(Thread.currentThread().getName() +" Hora salida estimada " + HandleFile.getInstance().getFormatoFecha().format(horaSalida)+" de vehiculo "+ aux.getMatricula());
+                
+                //Thread.sleep(10 * aux.getEspera());
+                
+                while (Reloj.getInstance().getDate().compareTo(horaSalida) != 0 ) {
                     
-                    System.out.println("Procesa casilla " + this.numeroCasilla +" el vehiculo de tipo " + aux.getTipo() + " con matrícula: " + aux.getMatricula());
-                    System.out.print("Quedan en espera de la casilla " + this.getNumeroCasilla() + " "+ enEspera.size() + " vehículos: ");
-                    for (IVehiculo ve : enEspera) {
-                        System.out.print(ve.getMatricula() + " ");
-                    }
-                    System.out.println("");
-                    Long esperaVehiculo = new Long((Reloj.getInstance().getDate().getTime() - aux.getTime().getTime())/1000);
-                    BancoDatos.getBancoDatos().registrar(aux, esperaVehiculo);
-                            
-                    SimpleDateFormat formato =  new SimpleDateFormat("hh:mm:ss a dd-MMM-aa");
-                    HandleFile.getInstance().writeArchivo(Thread.currentThread().getName()+";"+ this.numeroCasilla +";" + aux.getTipo()+ ";"+aux.getTelepeaje()+";"
-                            +aux.getMatricula()+";"+ aux.getEspera()+" seg;"+formato.format(aux.getTime())+";"+ formato.format(Reloj.getInstance().getDate())+";"+ esperaVehiculo);
-                    
-                } catch (Exception ex) {
-                    Logger.getLogger(Casilla.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                synchronized(Reloj.getInstance()){
+                    try {
+                        
+                        System.out.println("Procesa casilla " + this.numeroCasilla +" el vehiculo de tipo " + aux.getTipo() + " con matrícula: " + aux.getMatricula());
+                        System.out.print("Quedan en espera de la casilla " + this.getNumeroCasilla() + " "+ enEspera.size() + " vehículos: ");
+                        for (IVehiculo ve : enEspera) {
+                            System.out.print(ve.getMatricula() + " ");
+                        }
+                        System.out.println("");
+                        Long esperaVehiculo = new Long((Reloj.getInstance().getDate().getTime() - aux.getTime().getTime())/1000);
+                        BancoDatos.getBancoDatos().registrar(aux, esperaVehiculo);
+                        
+                        SimpleDateFormat formato =  new SimpleDateFormat("hh:mm:ss a dd-MMM-aa");
+                        HandleFile.getInstance().writeArchivo(Thread.currentThread().getName()+";"+ this.numeroCasilla +";" + aux.getTipo()+ ";"+aux.getTelepeaje()+";"
+                                +aux.getMatricula()+";"+ aux.getEspera()+" seg;"+formato.format(aux.getTime())+";"+ formato.format(Reloj.getInstance().getDate())+";"+ esperaVehiculo);
+                        
+                    } catch (Exception ex) {
+                        Logger.getLogger(Casilla.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                
+                // Se dehabilita si no tiene mas vehiculos en espera, solo si la casilla no son las primeras casilla 0 y casilla 1.
+                if (this.numeroCasilla > 1  && enEspera.isEmpty()) {
+                    this.setHabilitada(false);
+                }
+                
+                //if (!enEspera.isEmpty()) {
+                //    enEspera.remove();
+                //}
+                accesoCasilla.release();
             }
-            
-            // Se dehabilita si no tiene mas vehiculos en espera, solo si la casilla no son las primeras casilla 0 y casilla 1. 
-            if (this.numeroCasilla > 1  && enEspera.isEmpty()) {
-                this.setHabilitada(false);
-            }
-            enEspera.remove();
-            accesoCasilla.release();
-            
         } catch (InterruptedException ex) {
             Logger.getLogger(Casilla.class.getName()).log(Level.SEVERE, null, ex);
         }

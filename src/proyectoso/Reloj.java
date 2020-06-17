@@ -7,6 +7,7 @@ package proyectoso;
 
 import Utils.HandleFile;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -23,6 +24,15 @@ public class Reloj extends Thread{
     private static Reloj reloj;
     //Calendar calentario;
     //Thread h1;
+    
+    public synchronized Date esperarTiempo(int esperaEnSegundos){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.MILLISECOND, esperaEnSegundos*1000);
+        return cal.getTime();
+    }
+    
+    
     
     public synchronized int getRazonCambio(){
         return speed;
