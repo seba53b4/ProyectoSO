@@ -10,7 +10,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import proyectoso.BancoDatos;
 import proyectoso.Casilla;
 import proyectoso.Peaje;
 import proyectoso.Reloj;
@@ -55,7 +54,7 @@ public class Evento implements Runnable{
     public void run() {
         
         SimpleDateFormat formato =  new SimpleDateFormat("hh:mm:ss a dd-MMM-aa");
-        Peaje.getInstance().estadoEventoCasilla(numeroCasilla, false);
+        Peaje.getInstance().estadoEventoCasilla(numeroCasilla, true); // 
         
         synchronized(Reloj.getInstance()){
             try {
@@ -73,7 +72,7 @@ public class Evento implements Runnable{
                     
         }
         
-        Peaje.getInstance().estadoEventoCasilla(numeroCasilla, true);
+        Peaje.getInstance().estadoEventoCasilla(numeroCasilla, false);
         Peaje.getInstance().casillaProcesoEventoBaja(numeroCasilla);
 //      System.out.println("Finaliza el evento "+ toString());
         

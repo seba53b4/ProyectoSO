@@ -117,7 +117,8 @@ public class Casilla implements Runnable{
             accesoCasilla.acquire();
             IVehiculo aux ;
             
-            aux =  enEspera.poll();
+            aux =  enEspera.peek();
+            
             if (aux != null) {
                 
                 Date horaSalida;
@@ -126,36 +127,41 @@ public class Casilla implements Runnable{
                 horaSalida = Reloj.getInstance().esperarTiempo(aux.getEspera());
                 System.out.println(Thread.currentThread().getName() +" Hora salida estimada " + HandleFile.getInstance().getFormatoFecha().format(horaSalida)+" de vehiculo "+ aux.getMatricula());
                 
-                while (Reloj.getInstance().getDate().compareTo(horaSalida) != 0 ) {
+                while (Reloj.getInstance().getDate().compareTo(horaSalida) != 0 && !isBloqueada()) {
                     
                 }
                 
-                synchronized(Reloj.getInstance()){
-                    try {
-                        
-                        System.out.println("Procesa casilla " + this.numeroCasilla +" el vehiculo de tipo " + aux.getTipo() + " con matrícula: " + aux.getMatricula());
-                        System.out.print("Quedan en espera de la casilla " + this.getNumeroCasilla() + " "+ enEspera.size() + " vehículos: ");
-                        for (IVehiculo ve : enEspera) {
-                            System.out.print(ve.getMatricula() + " ");
+                if (!isBloqueada()) {
+                    
+                    synchronized(Reloj.getInstance()){
+                        try {
+                            
+                            System.out.println("Procesa casilla " + this.numeroCasilla +" el vehiculo de tipo " + aux.getTipo() + " con matrícula: " + aux.getMatricula());
+                            System.out.print("Quedan en espera de la casilla " + this.getNumeroCasilla() + " "+ enEspera.size() + " vehículos: ");
+                            for (IVehiculo ve : enEspera) {
+                                System.out.print(ve.getMatricula() + " ");
+                            }
+                            System.out.println("");
+                            Long esperaVehiculo = new Long((Reloj.getInstance().getDate().getTime() - aux.getTime().getTime())/1000);
+                            BancoDatos.getBancoDatos().registrar(aux, esperaVehiculo);
+                            
+                            SimpleDateFormat formato =  new SimpleDateFormat("hh:mm:ss a dd-MMM-aa");
+                            HandleFile.getInstance().writeArchivo(Thread.currentThread().getName()+";"+ this.numeroCasilla +";" + aux.getTipo()+ ";"+aux.getTelepeaje()+";"
+                                    +aux.getMatricula()+";"+ aux.getEspera()+" seg;"+formato.format(aux.getTime())+";"+formato.format(entradaReal)+";"+ formato.format(Reloj.getInstance().getDate())+";"+ esperaVehiculo);
+                            
+                        } catch (Exception ex) {
+                            Logger.getLogger(Casilla.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        System.out.println("");
-                        Long esperaVehiculo = new Long((Reloj.getInstance().getDate().getTime() - aux.getTime().getTime())/1000);
-                        BancoDatos.getBancoDatos().registrar(aux, esperaVehiculo);
-                        
-                        SimpleDateFormat formato =  new SimpleDateFormat("hh:mm:ss a dd-MMM-aa");
-                        HandleFile.getInstance().writeArchivo(Thread.currentThread().getName()+";"+ this.numeroCasilla +";" + aux.getTipo()+ ";"+aux.getTelepeaje()+";"
-                                +aux.getMatricula()+";"+ aux.getEspera()+" seg;"+formato.format(aux.getTime())+";"+formato.format(entradaReal)+";"+ formato.format(Reloj.getInstance().getDate())+";"+ esperaVehiculo);
-                        
-                    } catch (Exception ex) {
-                        Logger.getLogger(Casilla.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                }
-                
-                // Se dehabilita si no tiene mas vehiculos en espera, solo si la casilla no es Default
-                if (!this.esDefault && enEspera.isEmpty()) {
-                    this.setHabilitada(false);
-                    // dinamico por el uso
                     
+                    // Se dehabilita si no tiene mas vehiculos en espera, solo si la casilla no es Default
+                    if (!this.esDefault && enEspera.isEmpty()) {
+                        this.setHabilitada(false);
+                        // dinamico por el uso
+                        
+                    }
+                    
+                    enEspera.pollFirst();
                 }
                 
             }
