@@ -15,7 +15,6 @@ import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  *
  * @author Seba-OS
@@ -79,6 +78,7 @@ public class Casilla implements Runnable{
     public void run() {
         
         try {
+            
             accesoCasilla.acquire();
             IVehiculo aux ;
             
@@ -109,7 +109,7 @@ public class Casilla implements Runnable{
                         
                         SimpleDateFormat formato =  new SimpleDateFormat("hh:mm:ss a dd-MMM-aa");
                         HandleFile.getInstance().writeArchivo(Thread.currentThread().getName()+";"+ this.numeroCasilla +";" + aux.getTipo()+ ";"+aux.getTelepeaje()+";"
-                                +aux.getMatricula()+";"+ aux.getEspera()+" seg;"+formato.format(aux.getTime())+";"+ formato.format(Reloj.getInstance().getDate())+";"+ esperaVehiculo);
+                                +aux.getMatricula()+";"+ aux.getEspera()+" seg;"+formato.format(aux.getTime())+";"+formato.format(entradaReal)+";"+ formato.format(Reloj.getInstance().getDate())+";"+ esperaVehiculo);
                         
                     } catch (Exception ex) {
                         Logger.getLogger(Casilla.class.getName()).log(Level.SEVERE, null, ex);
@@ -123,11 +123,8 @@ public class Casilla implements Runnable{
                     
                 }
                 
-                //if (!enEspera.isEmpty()) {
-                //    enEspera.remove();
-                //}
-                accesoCasilla.release();
             }
+                accesoCasilla.release();
         } catch (InterruptedException ex) {
             Logger.getLogger(Casilla.class.getName()).log(Level.SEVERE, null, ex);
         }

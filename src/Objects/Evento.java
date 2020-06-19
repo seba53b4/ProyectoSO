@@ -55,6 +55,7 @@ public class Evento implements Runnable{
     public void run() {
         
         SimpleDateFormat formato =  new SimpleDateFormat("hh:mm:ss a dd-MMM-aa");
+        Peaje.getInstance().estadoEventoCasilla(numeroCasilla, false);
         
         synchronized(Reloj.getInstance()){
             try {
@@ -64,20 +65,16 @@ public class Evento implements Runnable{
                 Logger.getLogger(Casilla.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-//        System.out.println("*********************");
-//        System.out.println("Ocurre un evento en la casilla " + getNumeroCasilla());
-//        System.out.println("Se bloquea desde " + formato.format(getFechaEvento()) + " hasta " + formato.format(getFechaFinal()));
-//        //System.out.println("Fecha evento iniciado "+ event.getFechaEvento()+ " estado casilla "+event.getNumeroCasilla()+" "+casillas[event.getNumeroCasilla()].isBloqueada());
-//        //eventosPasados.add(event);
-//        System.out.println("*********************");
+
         
-        Peaje.getInstance().estadoEventoCasilla(numeroCasilla, false);
+        
         
         while (Reloj.getInstance().getDate().compareTo(fechaFinal) != 0 ) {
                     
         }
         
         Peaje.getInstance().estadoEventoCasilla(numeroCasilla, true);
+        Peaje.getInstance().casillaProcesoEventoBaja(numeroCasilla);
 //      System.out.println("Finaliza el evento "+ toString());
         
          synchronized(Reloj.getInstance()){
