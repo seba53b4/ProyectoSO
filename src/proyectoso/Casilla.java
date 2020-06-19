@@ -27,6 +27,7 @@ public class Casilla implements Runnable{
     private boolean habilitada;
     private Semaphore accesoCasilla;
     private boolean bloqueada;
+    private boolean esDefault;
 
     public void setBloqueada(boolean bloqueada) {
         this.bloqueada = bloqueada;
@@ -59,6 +60,19 @@ public class Casilla implements Runnable{
         numeroCasilla = numCasilla;
         accesoCasilla = new Semaphore(1);
         bloqueada = false;
+        if (numeroCasilla < 2) {
+            esDefault = true;
+        } else {
+            esDefault = false;
+        }
+    }
+
+    public void setEsDefault(boolean esDefault) {
+        this.esDefault = esDefault;
+    }
+
+    public boolean esDefault() {
+        return esDefault;
     }
     
     @Override
@@ -74,18 +88,13 @@ public class Casilla implements Runnable{
                 Date horaSalida;
                 Date entradaReal = (Date) Reloj.getInstance().getDate().clone();
                 System.out.println(Thread.currentThread().getName() +" hora real de entrada " + HandleFile.getInstance().getFormatoFecha().format(entradaReal) +" de vehiculo "+ aux.getMatricula());
-                
-                System.out.println("HORA Salida ANTES"+ entradaReal);
                 horaSalida = Reloj.getInstance().esperarTiempo(aux.getEspera());
-                System.out.println("HORA Salida DESPUES"+ horaSalida);
-                
                 System.out.println(Thread.currentThread().getName() +" Hora salida estimada " + HandleFile.getInstance().getFormatoFecha().format(horaSalida)+" de vehiculo "+ aux.getMatricula());
-                
-                //Thread.sleep(10 * aux.getEspera());
                 
                 while (Reloj.getInstance().getDate().compareTo(horaSalida) != 0 ) {
                     
                 }
+                
                 synchronized(Reloj.getInstance()){
                     try {
                         
@@ -107,9 +116,11 @@ public class Casilla implements Runnable{
                     }
                 }
                 
-                // Se dehabilita si no tiene mas vehiculos en espera, solo si la casilla no son las primeras casilla 0 y casilla 1.
-                if (this.numeroCasilla > 1  && enEspera.isEmpty()) {
+                // Se dehabilita si no tiene mas vehiculos en espera, solo si la casilla no es Default
+                if (!this.esDefault && enEspera.isEmpty()) {
                     this.setHabilitada(false);
+                    // dinamico por el uso
+                    
                 }
                 
                 //if (!enEspera.isEmpty()) {
