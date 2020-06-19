@@ -143,7 +143,7 @@ public class HandleFile{
           bufferWriter = new BufferedWriter(fw);
           formatoFecha = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
           try {
-              bufferWriter.write("Hilo;Casilla;Tipo;Telepeaje;Matricula;Demora Vehiculo;Hora Entrada;Hora Salida;Tiempo Espera"+" \n");
+              bufferWriter.write("Hilo;Casilla;Tipo;Telepeaje;Matricula;Demora Vehiculo;Hora Entrada;Hora Real Entrada;Hora Salida;Tiempo Espera"+" \n");
           } catch(Exception e) {
               System.out.println("Excepcion leyendo fichero" + e);
           }
@@ -233,7 +233,7 @@ public class HandleFile{
         try {
             
             bufferWriter.write(line+" \n");
-            
+            System.out.println("guardada "+ line);
             return true;
             
         } catch(Exception e) {

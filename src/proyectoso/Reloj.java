@@ -7,7 +7,9 @@ package proyectoso;
 
 import Utils.HandleFile;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.Semaphore;
 
 /**
  * Encagada de simular el tiempo
@@ -20,14 +22,34 @@ public class Reloj extends Thread{
     private int segundos, horas, minutos, dia,mes,año, speed;
     private String ampm;
     private Date date;
+    private Semaphore acceso = new Semaphore(1);
     public static SimpleDateFormat formatoFecha = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
     private static Reloj reloj;
     //Calendar calentario;
     //Thread h1;
     
+    public synchronized Date esperarTiempo(int esperaEnSegundos){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.MILLISECOND, esperaEnSegundos*1000);
+        return cal.getTime();
+    }
+    
+    
+    
     public synchronized int getRazonCambio(){
         return speed;
     }
+    
+    public synchronized void getAccesoReloj() throws InterruptedException{
+        acceso.acquire();
+        
+    }
+    public synchronized void liberarAccesoReloj() throws InterruptedException{
+        acceso.release();
+        
+    }
+    
     
     public synchronized static Reloj getInstance(){
        return reloj;
@@ -44,6 +66,7 @@ public class Reloj extends Thread{
         this.speed = speed;
         this.ampm = "am";
         date = new Date();
+        
         
     }
     public Reloj(int speed, int horas, int minutos, int segundos, int dia, int mes, int año){
