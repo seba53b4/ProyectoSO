@@ -230,7 +230,7 @@ public class HandleFile{
         try {
             
             bufferWriter.write(line+" \n");
-            System.out.println("guardada "+ line);
+            //System.out.println("guardada "+ line);
             return true;
             
         } catch(Exception e) {

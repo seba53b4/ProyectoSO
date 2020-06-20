@@ -88,9 +88,9 @@ public class Casilla implements Runnable{
                 
                 Date horaSalida;
                 Date entradaReal = (Date) Reloj.getInstance().getDate().clone();
-                System.out.println(Thread.currentThread().getName() +" hora real de entrada " + HandleFile.getInstance().getFormatoFecha().format(entradaReal) +" de vehiculo "+ aux.getMatricula());
+                //System.out.println(Thread.currentThread().getName() +" hora real de entrada " + HandleFile.getInstance().getFormatoFecha().format(entradaReal) +" de vehiculo "+ aux.getMatricula());
                 horaSalida = Reloj.getInstance().esperarTiempo(aux.getEspera());
-                System.out.println(Thread.currentThread().getName() +" Hora salida estimada " + HandleFile.getInstance().getFormatoFecha().format(horaSalida)+" de vehiculo "+ aux.getMatricula());
+                //System.out.println(Thread.currentThread().getName() +" Hora salida estimada " + HandleFile.getInstance().getFormatoFecha().format(horaSalida)+" de vehiculo "+ aux.getMatricula());
                 
                 while (Reloj.getInstance().getDate().compareTo(horaSalida) != 0 && !isBloqueada()) {
                     
@@ -101,12 +101,12 @@ public class Casilla implements Runnable{
                     synchronized(Reloj.getInstance()){
                         try {
                             
-                            System.out.println("Procesa casilla " + this.numeroCasilla +" el vehiculo de tipo " + aux.getTipo() + " con matrícula: " + aux.getMatricula());
-                            System.out.print("Quedan en espera de la casilla " + this.getNumeroCasilla() + " "+ enEspera.size() + " vehículos: ");
-                            for (IVehiculo ve : enEspera) {
-                                System.out.print(ve.getMatricula() + " ");
-                            }
-                            System.out.println("");
+                            System.out.println("[SALE] El vehiculo de tipo " + aux.getTipo() + " con matrícula: " + aux.getMatricula() + " se procesa en la casilla " + this.numeroCasilla );
+                            //System.out.print("Quedan en espera de la casilla " + this.getNumeroCasilla() + " "+ enEspera.size() + " vehículos: ");
+                            //for (IVehiculo ve : enEspera) {
+                                //System.out.print(ve.getMatricula() + " ");
+                            //}
+                            //System.out.println("");
                             Long esperaVehiculo = new Long((Reloj.getInstance().getDate().getTime() - aux.getTime().getTime())/1000);
                             BancoDatos.getBancoDatos().registrar(aux, esperaVehiculo);
                             
