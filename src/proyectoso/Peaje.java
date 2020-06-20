@@ -21,14 +21,13 @@ public class Peaje{
     private Queue<IVehiculo> vehiculos;//archivo.lenght];
     private Casilla[] casillas;
     public static Peaje peaje;
-    public Queue<Thread> hilos;
+    public Queue<Thread> hilosCasilla;
     public Queue<Thread> hilosEventos;
     public Queue<Evento> eventos;
-    public LinkedList<Evento> eventosPasados;
+   
     public static Peaje getInstance(){
         return peaje;
     }
-  
     
     public Peaje(){
         
@@ -41,10 +40,9 @@ public class Peaje{
         vehiculos = HandleFile.getInstance().cargaArchivo();
         eventos = HandleFile.getInstance().getEventos();
         peaje = this;
-        hilos = new LinkedList();
+        hilosCasilla = new LinkedList();
         hilosEventos = new LinkedList();
         
-        eventosPasados = new LinkedList<>();
         
     }
     
@@ -62,13 +60,6 @@ public class Peaje{
         
         while (!vehiculos.isEmpty()) {
             
-            //            if ((Reloj.getInstance().getDate().getHours() == 12 || Reloj.getInstance().getDate().getHours() == 18) && Reloj.getInstance().getDate().getSeconds() >= 0) {
-            //                BancoDatos.getBancoDatos().setAumentarTarifasHoraPico();
-            //            }
-            //
-            //            if ((Reloj.getInstance().getDate().getHours() == 13 || Reloj.getInstance().getDate().getHours() == 19) && Reloj.getInstance().getDate().getSeconds() > 0) {
-            //                BancoDatos.getBancoDatos().setTarifaNormal();
-            //            }
             
             if (!eventos.isEmpty() && Reloj.getInstance().getDate().compareTo(eventos.peek().getFechaEvento()) == 0) {
                 SimpleDateFormat formato =  new SimpleDateFormat("hh:mm:ss a dd-MMM-aa");
@@ -76,38 +67,18 @@ public class Peaje{
                 Thread th = new Thread(event);
                 hilosEventos.add(th);
                 th.start();
-                //System.out.println("*********************");
                 System.out.println("Ocurre un evento en la casilla " + event.getNumeroCasilla());
-                //System.out.println("Se bloquea desde " + formato.format(event.getFechaEvento()) + " hasta " + formato.format(event.getFechaFinal()));
-                //System.out.println("Fecha evento iniciado "+ event.getFechaEvento()+ " estado casilla "+event.getNumeroCasilla()+" "+casillas[event.getNumeroCasilla()].isBloqueada());
-                //eventosPasados.add(event);
-                //System.out.println("*********************");
                 casillaProcesoEventoAlta(event);
                 
-                
-//                System.out.println("*********************");
-//                System.out.println("Ocurre un evento en la casilla " + event.getNumeroCasilla());
-//                System.out.println("Se bloquea desde " + formato.format(event.getFechaEvento()) + " hasta " + formato.format(event.getFechaFinal()));
-//                //System.out.println("Fecha evento iniciado "+ event.getFechaEvento()+ " estado casilla "+event.getNumeroCasilla()+" "+casillas[event.getNumeroCasilla()].isBloqueada());
-//                //eventosPasados.add(event);
-//                System.out.println("*********************");
             }
             
 
             if (vehiculos.peek() != null && Reloj.getInstance().getDate().compareTo(vehiculos.peek().getTime()) == 0){
                 veh = vehiculos.poll();
-                // Evaluacion de vehiculos Telepeaje y Emergencia
                 if (veh.getTelepeaje() || veh.getTipo().equals("emergencia")) {
                     
-//                    System.out.println("\n entra el vehiculo " + veh.getMatricula() +" como emergencia o telepeaje");
-//                    System.out.println("\n es telepeaje " + veh.getTelepeaje());
-//                    System.out.println("\n es emergencia " + veh.getTipo());
                     Casilla vacia = siguienteCasillaEspecial();
                     if (vacia != null) {
-//                        System.out.println("Ingresa el vehiculo " + veh.getMatricula() + " al peaje planificador.");
-//                        System.out.println("Es telepeaje o emergencia.");
-//                        System.out.println("Es telepeaje? " + veh.getTelepeaje());
-//                        System.out.println("Es emergencia? " + veh.getTipo());
                         ingresarVehiculoAEspera(vacia, veh);
                         continue;
                     }
@@ -119,7 +90,6 @@ public class Peaje{
                 for (Integer i : getCasillasDefault()) {
                     
                     if (casillas[i].getCantidadEnEspera() < 3) {
-                        //System.out.println("ingresa casilla default: "+ i+" "+ veh.getMatricula() );
                         ingresarVehiculoAEspera(menorCasilla(casillas[i], casillas[i+1]), veh);
                         agregada = true;
                         break;
@@ -137,27 +107,11 @@ public class Peaje{
                 
                 
             }
-            /*
-            if (!eventosPasados.isEmpty()) {
-                    for (Evento eventPasado : eventosPasados) {
-                        //System.out.println("RELOJ: " + Reloj.getInstance().getDate());
-                        //System.out.println("Evento fecha final "+eventPasado.getNumeroCasilla() +" "+ eventPasado.getFechaFinal());
-                        if (Reloj.getInstance().getDate().compareTo(eventPasado.getFechaFinal()) == 0) {
-                            System.out.println("Finaliza el evento "+ eventPasado.toString());
-                            casillas[eventPasado.getNumeroCasilla()].setBloqueada(false);
-                            
-                            if (eventPasado.getNumeroCasilla() < 2) {
-                                casillas[eventPasado.getNumeroCasilla()].setHabilitada(true);
-                            }
-                            eventosPasados.remove(eventPasado);
-                        }
-                    }
-                }*/
         }
         for (Thread hilo : hilosEventos) {
             hilo.join();
         }
-        for (Thread hilo : hilos) {
+        for (Thread hilo : hilosCasilla) {
             hilo.join();
         }
         
@@ -196,7 +150,6 @@ public class Peaje{
     public void casillaProcesoEventoAlta(Evento event){
         
         if (casillas[event.getNumeroCasilla()].esDefault()) {
-            //System.out.println("era default y SE TRANCA LA CASILLA "+ event.getNumeroCasilla());
             casillas[event.getNumeroCasilla()].setEsDefault(false); // quita el default a la casilla
             casillas[event.getNumeroCasilla()].setHabilitada(false);
             Casilla cs =  getSiguienteDefault(event.getNumeroCasilla()); // busca nueva casilla default
@@ -207,10 +160,6 @@ public class Peaje{
             casillas[(event.getNumeroCasilla()+1)%4].setHabilitada(true); // Se habilita una casilla mas para agilizar el pasaje
         }
         if (casillas[event.getNumeroCasilla()].getCantidadEnEspera() != 0) {
-//            System.out.println("SE REORDENAN LOS VEHICULOS DE LA CASILLA " + event.getNumeroCasilla());
-//            for (IVehiculo ve : casillas[event.getNumeroCasilla()].getEnEspera()) {
-//                System.out.println(ve.getMatricula());
-//            }
             reordenarVehiculosEstancados(casillas[event.getNumeroCasilla()].clearFila(),event.getNumeroCasilla());
         }
     }
@@ -225,17 +174,14 @@ public class Peaje{
             i = i % 4;
             if (!casillas[i].isBloqueada() && !casillas[i].esDefault() && numCasilla != i) {
                 casillas[i].setHabilitada(true);
-                //System.out.println("NUEVA DEFAULT casilla " + i );
                 return casillas[i];
             }
         }
     }
     
     public void reordenarVehiculosEstancados(Queue<IVehiculo> estancados, int numCasilla){
-        //System.out.println("Cantidad de vehiculos estancados en casilla "+ numCasilla + "son " + estancados.size());
         Casilla c1,c2,ret;
         for (IVehiculo estancado : estancados) {
-            //System.out.println("SE EVALUA EL VEHICULO"+ estancado.getMatricula());
             switch (numCasilla) {
                 case 0:
                     
@@ -299,13 +245,10 @@ public class Peaje{
     public Casilla siguienteCasillaDerecha(int numCasilla){
          for (int i = numCasilla+1; i < casillas.length; i++) {
             if (!casillas[i].isBloqueada()) {
-                
                 return casillas[i];
-                
             }
         }
         return null;
-        
     }
     
     
@@ -314,7 +257,7 @@ public class Peaje{
         System.out.println("[ENTRA] El vehiculo " + veh.getMatricula() + " ingresa a la lista de espera de la casilla " + a.getNumeroCasilla() );
         a.addVehiculoEnEspera(veh);
         Thread nuevoHilo = new Thread(a);
-        hilos.add(nuevoHilo);
+        hilosCasilla.add(nuevoHilo);
         nuevoHilo.start();
     }
     
@@ -342,6 +285,7 @@ public class Peaje{
         if (ret.getNumeroCasilla() == 0 && ret.isBloqueada()) {
             ret = siguienteCasilla();
         }
+        
         return ret;
     }
     

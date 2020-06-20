@@ -24,8 +24,6 @@ public class Reloj extends Thread{
     private Semaphore acceso = new Semaphore(1);
     public static SimpleDateFormat formatoFecha = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
     private static Reloj reloj;
-    //Calendar calentario;
-    //Thread h1;
     
     public synchronized Date esperarTiempo(int esperaEnSegundos){
         Calendar cal = Calendar.getInstance();
